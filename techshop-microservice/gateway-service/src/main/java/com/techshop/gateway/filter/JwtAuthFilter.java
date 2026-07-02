@@ -29,6 +29,7 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
             "/api/products",
             "/api/categories",
             "/api/reviews",
+            "/api/banners",
             "/api/ai"
     );
 

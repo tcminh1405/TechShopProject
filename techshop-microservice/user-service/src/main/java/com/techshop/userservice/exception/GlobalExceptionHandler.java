@@ -6,9 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.server.ResponseStatusException;
 
 @ControllerAdvice
 @Slf4j
@@ -76,6 +78,28 @@ public class GlobalExceptionHandler {
                         .message(errorCode.getMessage())
                         .correlationId(correlationId)
                         .build());
+    }
+
+    @ExceptionHandler(value = ResponseStatusException.class)
+    ResponseEntity<ApiResponse<Void>> handlingResponseStatusException(ResponseStatusException exception) {
+        String correlationId = resolveCorrelationId();
+        HttpStatus status = HttpStatus.resolve(exception.getStatusCode().value());
+        if (status == null) status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        log.warn("[USR-{}] ResponseStatusException correlationId={} userId={} - {} {}",
+                exception.getStatusCode().value(),
+                correlationId,
+                resolveUserId(),
+                exception.getStatusCode().value(),
+                exception.getReason());
+
+        ApiResponse<Void> apiResponse = ApiResponse.<Void>builder()
+                .code(exception.getStatusCode().value())
+                .message(exception.getReason() != null ? exception.getReason() : status.getReasonPhrase())
+                .correlationId(correlationId)
+                .build();
+
+        return ResponseEntity.status(exception.getStatusCode()).body(apiResponse);
     }
 
     @ExceptionHandler(value = Exception.class)

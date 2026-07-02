@@ -3,6 +3,7 @@ package com.techshop.userservice.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.Setter;
 
 /**
  * Request gửi OTP — dùng chung cho REGISTER, LOGIN, FORGOT_PASSWORD.
@@ -14,7 +15,8 @@ import lombok.Data;
 @Data
 public class OtpSendRequest {
 
-    @NotBlank(message = "Type không được để trống")
+    // type được set bởi controller (e.g. forgotPassword tự set FORGOT_PASSWORD)
+    // nên không @NotBlank để tránh validation fail trước khi setter chạy
     private String type;
 
     @NotBlank(message = "Email không được để trống")

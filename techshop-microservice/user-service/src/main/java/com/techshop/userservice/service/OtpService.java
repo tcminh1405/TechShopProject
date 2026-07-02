@@ -1,7 +1,7 @@
 package com.techshop.userservice.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.techshop.userservice.config.KafkaTopicConstants;
+import com.techshop.userservice.constant.KafkaTopicConstants;
 import com.techshop.userservice.dto.*;
 import com.techshop.userservice.event.OtpRequestedEvent;
 import com.techshop.userservice.event.UserRegisteredEvent;
