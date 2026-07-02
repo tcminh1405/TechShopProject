@@ -29,6 +29,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/categories/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/reviews/product/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/banners/**").permitAll()
                         
                         // Admin only - POST, PUT, DELETE
                         .requestMatchers(HttpMethod.POST, "/products/**").hasRole("ADMIN")
@@ -37,6 +38,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/categories/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/categories/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/categories/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/banners/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/banners/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/banners/**").hasRole("ADMIN")
                         
                         // Admin reviews delete
                         .requestMatchers(HttpMethod.DELETE, "/reviews/admin/**").hasRole("ADMIN")

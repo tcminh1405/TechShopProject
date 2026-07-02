@@ -213,7 +213,28 @@ async function startMigration() {
     }
   }
 
-  // Bước 3: Lấy sản phẩm từ Firestore REST API
+  // Bước 3: Tải danh sách SKU sản phẩm hiện có từ database
+  console.log('📦 Đang tải danh sách SKU sản phẩm hiện có từ database...');
+  const existingSkus = new Set();
+  try {
+    const prodRes = await fetch(`${GATEWAY_URL}/api/products?size=1000`);
+    if (prodRes.ok) {
+      const prodData = await prodRes.json();
+      const content = prodData.content || [];
+      for (const prod of content) {
+        if (prod.sku) {
+          existingSkus.add(prod.sku);
+        }
+      }
+      console.log(`   - Đã nhận dạng ${existingSkus.size} SKU hiện có trong database.`);
+    } else {
+      console.warn(`   ⚠️ Cảnh báo: Lấy danh sách sản phẩm thất bại (${prodRes.status})`);
+    }
+  } catch (err) {
+    console.warn(`   ⚠️ Không thể kết nối để lấy danh sách sản phẩm hiện có:`, err.message);
+  }
+
+  // Bước 4: Lấy sản phẩm từ Firestore REST API
   console.log('📡 Đang truy vấn dữ liệu sản phẩm từ Firestore...');
   let productsList = [];
   let nextPageToken = '';
@@ -244,14 +265,22 @@ async function startMigration() {
     process.exit(1);
   }
 
-  // Bước 4: Di chuyển dữ liệu sản phẩm và tồn kho
-  console.log('📦 Bắt đầu upload ảnh lên Cloudinary và lưu sản phẩm vào database MySQL...');
+  // Bước 5: Di chuyển dữ liệu sản phẩm và tồn kho
+  console.log('📦 Bắt đầu di chuyển dữ liệu sản phẩm...');
   let successCount = 0;
   let failCount = 0;
 
   for (let i = 0; i < productsList.length; i++) {
     const rawProd = productsList[i];
-    console.log(`\n🔄 [${i + 1}/${productsList.length}] Xử lý: "${rawProd.name}" (SKU: ${rawProd.id || 'N/A'})`);
+    const sku = rawProd.id || `PROD-${Date.now()}-${i}`;
+
+    if (existingSkus.has(sku)) {
+      console.log(`⏭️ [${i + 1}/${productsList.length}] Bỏ qua sản phẩm đã tồn tại: "${rawProd.name}" (SKU: ${sku})`);
+      successCount++;
+      continue;
+    }
+
+    console.log(`\n🔄 [${i + 1}/${productsList.length}] Xử lý: "${rawProd.name}" (SKU: ${sku})`);
 
     // Phân loại danh mục
     let catSlug = rawProd.category || 'phu-kien';
@@ -289,15 +318,28 @@ async function startMigration() {
     };
     const specificationsString = JSON.stringify(specsData);
 
+    // Sanitize prices
+    let price = Number(rawProd.price) || 0;
+    let salePrice = rawProd.salePrice ? Number(rawProd.salePrice) : null;
+
+    if (price <= 0) {
+      price = 99000; // Default positive price
+    }
+    if (salePrice !== null) {
+      if (salePrice <= 0 || salePrice >= price) {
+        salePrice = null; // Reset invalid discount
+      }
+    }
+
     const productPayload = {
       name: rawProd.name,
       description: rawProd.description || '',
-      price: rawProd.price || 0,
-      salePrice: rawProd.salePrice || null,
+      price: price,
+      salePrice: salePrice,
       imageUrl: primaryImageUrl,
       images: imagesJsonString,
       brand: rawProd.brand || '',
-      sku: rawProd.id || `PROD-${Date.now()}-${i}`,
+      sku: sku,
       slug: rawProd.slug || rawProd.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
       categoryId: categoryId,
       specifications: specificationsString,
@@ -344,6 +386,7 @@ async function startMigration() {
       successCount++;
     } catch (err) {
       console.error(`   ❌ Thất bại khi đồng bộ sản phẩm này:`, err.message);
+      console.error(`      Chi tiết: Price: ${rawProd.price}, SalePrice: ${rawProd.salePrice}`);
       failCount++;
     }
   }
