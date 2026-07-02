@@ -1,120 +1,186 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { CheckCircle, XCircle, Loader } from "lucide-react";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
+import { CheckCircle, XCircle, Loader, Package, ArrowRight, RotateCcw } from "lucide-react";
 import axiosClient from "../api/axios";
+import CheckoutStepper from "../components/CheckoutStepper";
 
 export default function PaymentResult() {
   const [searchParams] = useSearchParams();
   const nav = useNavigate();
-  const [status, setStatus] = useState("processing"); // processing, success, failed
+  const [status, setStatus] = useState("processing"); // processing | success | failed
   const [message, setMessage] = useState("");
+  const [orderId, setOrderId] = useState(null);
+  const [countdown, setCountdown] = useState(5);
 
   useEffect(() => {
     const verifyPayment = async () => {
       try {
-        // Lấy tất cả params từ VNPay callback
         const params = {};
         for (const [key, value] of searchParams.entries()) {
           params[key] = value;
         }
 
-        console.log("VNPay callback params:", params);
-
-        // Gọi backend để verify payment (cần prefix /api vì gateway routing là /api/payments/**)
-        const response = await axiosClient.get("/api/payments/vnpay/callback", {
-          params: params
-        });
-
-        console.log("Payment verification response:", response.data);
+        const response = await axiosClient.get("/api/payments/vnpay/callback", { params });
 
         if (response.data.success) {
-          // Thanh toán thành công
           setStatus("success");
           setMessage(response.data.message || "Thanh toán thành công!");
-          
-          // Lấy orderId từ response (đây là order ID thật, không phải transaction ID)
-          const orderId = response.data.orderId;
-          
-          console.log("Order ID from response:", orderId);
-          
-          // Chuyển đến order detail sau 2 giây với force refresh
-          setTimeout(() => {
-            if (orderId && orderId !== "0") {
-              // Thêm timestamp để force refresh trang
-              nav(`/orders/${orderId}?refresh=${Date.now()}`);
-            } else {
-              nav("/orders");
+          const oid = response.data.orderId;
+          setOrderId(oid);
+
+          // Auto-redirect countdown
+          let count = 5;
+          const timer = setInterval(() => {
+            count -= 1;
+            setCountdown(count);
+            if (count <= 0) {
+              clearInterval(timer);
+              if (oid && oid !== "0") {
+                nav(`/orders/${oid}?placed=1`);
+              } else {
+                nav("/orders");
+              }
             }
-          }, 2000);
+          }, 1000);
         } else {
-          // Thanh toán thất bại
           setStatus("failed");
           setMessage(response.data.message || "Thanh toán thất bại");
-          
-          // Chuyển về orders sau 5 giây
-          setTimeout(() => {
-            nav("/orders");
-          }, 5000);
         }
       } catch (error) {
         console.error("Error verifying payment:", error);
         setStatus("failed");
         setMessage("Có lỗi xảy ra khi xác thực thanh toán");
-        
-        setTimeout(() => {
-          nav("/orders");
-        }, 5000);
       }
     };
 
     verifyPayment();
   }, [searchParams, nav]);
 
+  // Step: processing=2, success=3, failed=2
+  const stepperStep = status === "success" ? 3 : 2;
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-lg p-8 text-center">
-        {status === "processing" && (
-          <>
-            <Loader className="h-16 w-16 text-blue-500 animate-spin mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Đang xử lý thanh toán...
-            </h1>
-            <p className="text-gray-600">Vui lòng đợi trong giây lát</p>
-          </>
-        )}
+    <div className="min-h-screen bg-[#f5f5f5]">
+      <CheckoutStepper currentStep={stepperStep} />
 
-        {status === "success" && (
-          <>
-            <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Thanh toán thành công! 🎉
-            </h1>
-            <p className="text-gray-600 mb-4">
-              {message || "Đơn hàng của bạn đã được thanh toán thành công."}
-            </p>
-            <p className="text-sm text-gray-500">
-              Đang chuyển đến chi tiết đơn hàng...
-            </p>
-          </>
-        )}
+      <div className="max-w-[960px] mx-auto px-4 py-10">
+        <div className="max-w-lg mx-auto bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+          {/* Top color bar */}
+          <div className={`h-2 w-full ${
+            status === "success" ? "bg-green-500" :
+            status === "failed" ? "bg-[#E30019]" :
+            "bg-blue-500"
+          }`} />
 
-        {status === "failed" && (
-          <>
-            <XCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Thanh toán thất bại
-            </h1>
-            <p className="text-gray-600 mb-4">
-              {message || "Đã có lỗi xảy ra trong quá trình thanh toán."}
-            </p>
-            <button
-              onClick={() => nav("/orders")}
-              className="px-6 py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition"
-            >
-              Quay lại đơn hàng
-            </button>
-          </>
-        )}
+          <div className="p-8 text-center">
+            {/* Processing */}
+            {status === "processing" && (
+              <>
+                <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-5">
+                  <Loader className="h-10 w-10 text-blue-500 animate-spin" />
+                </div>
+                <h1 className="text-xl font-bold text-gray-900 mb-2">Đang xác thực thanh toán...</h1>
+                <p className="text-gray-500 text-sm">Vui lòng không đóng cửa sổ trình duyệt</p>
+
+                <div className="mt-6 flex justify-center gap-1.5">
+                  {[0, 1, 2].map((i) => (
+                    <div
+                      key={i}
+                      className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"
+                      style={{ animationDelay: `${i * 0.15}s` }}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* Success */}
+            {status === "success" && (
+              <>
+                <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-5">
+                  <CheckCircle className="h-10 w-10 text-green-500" />
+                </div>
+                <h1 className="text-2xl font-black text-gray-900 mb-1">Đặt hàng thành công!</h1>
+                <p className="text-green-600 font-semibold text-sm mb-3">Thanh toán đã được xác nhận</p>
+                <p className="text-gray-500 text-sm leading-relaxed mb-6">
+                  {message}. TechShop sẽ xử lý đơn hàng của bạn trong thời gian sớm nhất.
+                </p>
+
+                <div className="bg-gray-50 rounded-xl p-4 mb-6 text-sm text-gray-600 text-left space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-green-500 rounded-full" />
+                    Đơn hàng đã được xác nhận
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-green-500 rounded-full" />
+                    Email xác nhận đã được gửi
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-gray-300 rounded-full" />
+                    Đang chuẩn bị hàng
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3">
+                  {orderId && orderId !== "0" ? (
+                    <Link
+                      to={`/orders/${orderId}?placed=1`}
+                      className="flex-1 py-3 bg-[#E30019] hover:bg-red-700 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 transition"
+                    >
+                      <Package className="h-4 w-4" /> Xem đơn hàng
+                    </Link>
+                  ) : (
+                    <Link
+                      to="/orders"
+                      className="flex-1 py-3 bg-[#E30019] hover:bg-red-700 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 transition"
+                    >
+                      <Package className="h-4 w-4" /> Đơn hàng của tôi
+                    </Link>
+                  )}
+                  <Link
+                    to="/products"
+                    className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl text-sm flex items-center justify-center gap-2 transition"
+                  >
+                    Tiếp tục mua sắm <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+
+                <p className="text-xs text-gray-400 mt-4">
+                  Tự động chuyển trang sau {countdown} giây...
+                </p>
+              </>
+            )}
+
+            {/* Failed */}
+            {status === "failed" && (
+              <>
+                <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-5">
+                  <XCircle className="h-10 w-10 text-[#E30019]" />
+                </div>
+                <h1 className="text-2xl font-black text-gray-900 mb-1">Thanh toán thất bại</h1>
+                <p className="text-[#E30019] font-semibold text-sm mb-3">Giao dịch không thành công</p>
+                <p className="text-gray-500 text-sm leading-relaxed mb-6">
+                  {message || "Đã có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại hoặc chọn phương thức thanh toán khác."}
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Link
+                    to="/cart"
+                    className="flex-1 py-3 bg-[#E30019] hover:bg-red-700 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 transition"
+                  >
+                    <RotateCcw className="h-4 w-4" /> Thử lại
+                  </Link>
+                  <Link
+                    to="/orders"
+                    className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl text-sm flex items-center justify-center gap-2 transition"
+                  >
+                    <Package className="h-4 w-4" /> Đơn hàng của tôi
+                  </Link>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

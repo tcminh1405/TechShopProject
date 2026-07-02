@@ -55,7 +55,7 @@ export default function ChatBot() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition-colors"
+          className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-red-600 text-white shadow-lg hover:bg-red-700 transition-colors"
           aria-label="Mở chatbot"
         >
           <MessageCircle size={24} />
@@ -66,14 +66,14 @@ export default function ChatBot() {
       {isOpen && (
         <div className="fixed bottom-6 right-6 z-50 flex h-[500px] w-[360px] flex-col rounded-2xl border border-gray-200 bg-white shadow-2xl">
           {/* Header */}
-          <div className="flex items-center justify-between rounded-t-2xl bg-blue-600 px-4 py-3 text-white">
+          <div className="flex items-center justify-between rounded-t-2xl bg-red-600 px-4 py-3 text-white">
             <div className="flex items-center gap-2">
               <Bot size={20} />
               <span className="font-semibold">TechShop AI</span>
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="rounded p-1 hover:bg-blue-700"
+              className="rounded p-1 hover:bg-red-700"
               aria-label="Đóng chatbot"
             >
               <X size={18} />
@@ -88,14 +88,14 @@ export default function ChatBot() {
                 className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 {msg.role === "assistant" && (
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
                     <Bot size={14} />
                   </div>
                 )}
                 <div
                   className={`max-w-[75%] rounded-xl px-3 py-2 text-sm leading-relaxed ${
                     msg.role === "user"
-                      ? "bg-blue-600 text-white"
+                      ? "bg-red-600 text-white"
                       : "bg-gray-100 text-gray-800"
                   }`}
                 >
@@ -110,7 +110,7 @@ export default function ChatBot() {
             ))}
             {loading && (
               <div className="flex gap-2">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
                   <Bot size={14} />
                 </div>
                 <div className="rounded-xl bg-gray-100 px-3 py-2 text-sm text-gray-500">
@@ -131,13 +131,13 @@ export default function ChatBot() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Nhập tin nhắn..."
-              className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+              className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-red-500"
               disabled={loading}
             />
             <button
               type="submit"
               disabled={loading || !input.trim()}
-              className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-white disabled:opacity-50 hover:bg-blue-700 transition-colors"
+              className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-600 text-white disabled:opacity-50 hover:bg-red-700 transition-colors"
               aria-label="Gửi tin nhắn"
             >
               <Send size={16} />

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../store/AuthContext';
 import useNotificationStore from '../store/notificationStore';
 
-export default function NotificationBell({ dark = false }) {
+export default function NotificationBell({ dark = true }) {
     const [showNotifications, setShowNotifications] = useState(false);
     const { user } = useAuth();
     const { notifications, unreadCount, fetchNotifications, markAsRead, markAllAsRead } = useNotificationStore();
@@ -29,7 +29,7 @@ export default function NotificationBell({ dark = false }) {
             >
                 <Bell className="h-6 w-6" />
                 {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-bold animate-pulse">
+                    <span className="absolute -top-1 -right-1 bg-[#FFE600] text-black text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-bold animate-pulse">
                         {unreadCount > 9 ? "9+" : unreadCount}
                     </span>
                 )}

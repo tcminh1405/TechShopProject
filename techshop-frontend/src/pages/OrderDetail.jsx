@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, useSearchParams, Link } from "react-router-dom";
-import { ArrowLeft, Package, MapPin, Phone, Clock, CreditCard } from "lucide-react";
+import { ArrowLeft, Package, MapPin, Phone, Clock, CreditCard, CheckCircle } from "lucide-react";
 import orderApi from "../api/orderApi";
 import { useAuth } from "../store/AuthContext";
 import { toast } from "react-toastify";
+import CheckoutStepper from "../components/CheckoutStepper";
 
 const STATUS_MAP = {
   PENDING: { label: "Chờ xác nhận", color: "text-yellow-600 bg-yellow-50", step: 0 },
@@ -66,12 +67,29 @@ export default function OrderDetail() {
 
   const status = STATUS_MAP[order.status] || { label: order.status, color: "text-gray-600 bg-gray-50", step: 0 };
   const currentStep = status.step;
+  // Show stepper "Hoàn tất" (step 3) when coming from placed order
+  const justPlaced = searchParams.get("placed") === "1";
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <button onClick={() => nav("/orders")} className="flex items-center gap-2 text-gray-500 hover:text-orange-500 mb-6 transition">
-        <ArrowLeft className="h-4 w-4" /> Quay lại đơn hàng
-      </button>
+    <div className="min-h-screen bg-[#f5f5f5]">
+      {/* Checkout stepper — only shown when just placed */}
+      {justPlaced && <CheckoutStepper currentStep={3} />}
+
+      <div className="max-w-4xl mx-auto px-4 py-6">
+        {/* Success banner when just placed */}
+        {justPlaced && (
+          <div className="mb-5 bg-green-50 border border-green-200 rounded-xl px-5 py-4 flex items-center gap-3">
+            <CheckCircle className="h-6 w-6 text-green-500 shrink-0" />
+            <div>
+              <p className="font-bold text-green-800 text-sm">Đặt hàng thành công!</p>
+              <p className="text-green-700 text-xs mt-0.5">Cảm ơn bạn đã tin tưởng TechShop. Chúng tôi sẽ xử lý đơn hàng sớm nhất.</p>
+            </div>
+          </div>
+        )}
+
+        <button onClick={() => nav("/orders")} className="flex items-center gap-2 text-gray-500 hover:text-[#E30019] mb-5 transition text-sm">
+          <ArrowLeft className="h-4 w-4" /> Quay lại đơn hàng
+        </button>
 
       <div className="space-y-6">
         {/* Header */}
@@ -102,12 +120,12 @@ export default function OrderDetail() {
                 {STEPS.map((step, i) => (
                   <div key={step} className="flex items-center flex-1 last:flex-none">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-                      i <= currentStep ? "bg-orange-500 text-white" : "bg-gray-200 text-gray-500"
+                      i <= currentStep ? "bg-[#E30019] text-white" : "bg-gray-200 text-gray-500"
                     }`}>{i + 1}</div>
                     <div className="flex-1 mx-1">
-                      <p className={`text-xs text-center ${i <= currentStep ? "text-orange-500 font-medium" : "text-gray-400"}`}>{step}</p>
+                      <p className={`text-xs text-center ${i <= currentStep ? "text-[#E30019] font-medium" : "text-gray-400"}`}>{step}</p>
                       {i < STEPS.length - 1 && (
-                        <div className={`h-1 rounded-full mt-1 ${i < currentStep ? "bg-orange-500" : "bg-gray-200"}`} />
+                        <div className={`h-1 rounded-full mt-1 ${i < currentStep ? "bg-[#E30019]" : "bg-gray-200"}`} />
                       )}
                     </div>
                   </div>
@@ -121,7 +139,7 @@ export default function OrderDetail() {
           {/* Shipping info */}
           <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
             <h2 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <MapPin className="h-5 w-5 text-orange-500" /> Thông tin giao hàng
+              <MapPin className="h-5 w-5 text-[#E30019]" /> Thông tin giao hàng
             </h2>
             <div className="space-y-2 text-sm text-gray-600">
               <p className="flex items-center gap-2">
@@ -143,7 +161,7 @@ export default function OrderDetail() {
           {/* Payment info */}
           <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
             <h2 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <CreditCard className="h-5 w-5 text-orange-500" /> Thanh toán
+              <CreditCard className="h-5 w-5 text-[#E30019]" /> Thanh toán
             </h2>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between text-gray-600">
@@ -158,7 +176,7 @@ export default function OrderDetail() {
               </div>
               <div className="flex justify-between font-bold text-gray-900 pt-2 border-t">
                 <span>Tổng cộng</span>
-                <span className="text-orange-500">
+                <span className="text-[#E30019]">
                   {order.totalAmount ? Number(order.totalAmount).toLocaleString("vi-VN") : "0"}₫
                 </span>
               </div>
@@ -179,7 +197,7 @@ export default function OrderDetail() {
                 </div>
                 <div className="flex-1">
                   <p className="font-medium text-gray-800 text-sm">{item.productName || "Sản phẩm"}</p>
-                  {item.productBrand && <p className="text-xs text-orange-500">{item.productBrand}</p>}
+                  {item.productBrand && <p className="text-xs text-[#E30019]">{item.productBrand}</p>}
                   <p className="text-xs text-gray-500 mt-1">
                     x{item.quantity || 0} × {item.unitPrice ? Number(item.unitPrice).toLocaleString("vi-VN") : "0"}₫
                   </p>
@@ -192,6 +210,7 @@ export default function OrderDetail() {
           </div>
         </div>
       </div>
+      </div>{/* end max-w-4xl */}
     </div>
   );
 }

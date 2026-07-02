@@ -1,9 +1,10 @@
 import { useEffect, useState, useCallback, memo } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Trash2, Plus, Minus, ShoppingBag, Tag, Gift, ChevronRight, AlertCircle } from "lucide-react";
+import { Trash2, Plus, Minus, ShoppingBag, Tag, ChevronRight, AlertCircle } from "lucide-react";
 import useCartStore from "../store/cartStore";
 import { useAuth } from "../store/AuthContext";
 import { toast } from "react-toastify";
+import CheckoutStepper from "../components/CheckoutStepper";
 
 /**
  * Modal xác nhận tùy chỉnh
@@ -279,7 +280,11 @@ export default function Cart() {
   );
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] py-6 font-sans">
+    <div className="min-h-screen bg-[#f5f5f5] font-sans">
+      {/* Step bar */}
+      <CheckoutStepper currentStep={0} />
+
+      <div className="py-6">
       <ConfirmModal
         isOpen={modalConfig.isOpen}
         onClose={() => setModalConfig({ isOpen: false, type: null, targetId: null })}
@@ -403,18 +408,19 @@ export default function Cart() {
               <button
                 onClick={() => nav("/checkout")}
                 disabled={selectedItems.length === 0}
-                className="w-full py-4 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-200 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-all uppercase text-sm tracking-wider shadow-lg shadow-orange-500/25 active:scale-[0.98]"
+                className="w-full py-4 bg-[#E30019] hover:bg-red-700 disabled:bg-gray-200 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-all uppercase text-sm tracking-wider shadow-lg shadow-red-500/25 active:scale-[0.98]"
               >
-                Tiếp tục
+                Tiến hành đặt hàng
               </button>
 
-              <div className="mt-6 pt-4 border-t border-gray-100 text-[11px] text-gray-500 text-center">
+              <div className="mt-4 pt-4 border-t border-gray-100 text-[11px] text-gray-500 text-center">
                 Bằng cách đặt hàng, bạn đồng ý với Điều khoản của TechShop.
               </div>
             </div>
           </div>
         </div>
       </div>
+      </div>{/* end py-6 */}
     </div>
   );
 }

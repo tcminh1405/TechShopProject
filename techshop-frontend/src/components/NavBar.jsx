@@ -87,29 +87,75 @@ export default function NavBar() {
 
       {/* Red main header */}
       <div className="bg-[#E30019] sticky top-0 z-[190] shadow-md">
-        <div className="max-w-[1200px] mx-auto flex h-16 items-center gap-3 px-4 md:h-20">
+        {/* === MOBILE layout: 2 rows === */}
+        <div className="lg:hidden">
+          {/* Row 1: hamburger | logo | cart + user */}
+          <div className="flex items-center gap-2 px-3 pt-2 pb-1.5">
+            {/* Hamburger */}
+            <button
+              type="button"
+              onClick={() => setOpenMobileMenu(true)}
+              className="flex items-center justify-center h-9 w-9 rounded-[6px] bg-[#B80014] hover:bg-[#A60012] transition shrink-0"
+              aria-label="Mở menu danh mục"
+            >
+              <Menu className="h-5 w-5 text-white" />
+            </button>
 
-          {/* Mobile hamburger */}
-          <button
-            type="button"
-            onClick={() => setOpenMobileMenu(true)}
-            className="flex lg:hidden items-center justify-center h-10 w-10 rounded-[6px] bg-[#B80014] hover:bg-[#A60012] transition shrink-0"
-            aria-label="Mở menu danh mục"
-          >
-            <Menu className="h-5 w-5 text-white" />
-          </button>
+            {/* Logo */}
+            <Link to="/" className="flex shrink-0 items-center gap-1.5">
+              <div className="p-1 bg-white rounded-lg shadow-inner flex items-center justify-center">
+                <Zap className="h-5 w-5 text-[#E30019] fill-[#E30019]" />
+              </div>
+              <span className="font-extrabold text-lg text-white tracking-tight">
+                Tech<span className="text-[#FFE600]">Shop</span>
+              </span>
+            </Link>
+
+            {/* Spacer */}
+            <div className="flex-1" />
+
+            {/* Cart */}
+            <Link to="/cart" className="relative p-2 rounded-md bg-[#B80014] hover:bg-[#A60012] transition">
+              <ShoppingCart className="h-5 w-5 text-white" />
+              {totalItems > 0 && (
+                <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#FFE600] px-1 text-[9px] font-bold text-black ring-1 ring-white">
+                  {totalItems > 99 ? "99+" : totalItems}
+                </span>
+              )}
+            </Link>
+
+            {/* User */}
+            {user ? (
+              <Link to="/profile" className="p-2 rounded-md bg-[#B80014] hover:bg-[#A60012] transition">
+                <User className="h-5 w-5 text-white" />
+              </Link>
+            ) : (
+              <Link to="/login" className="p-2 rounded-md bg-[#B80014] hover:bg-[#A60012] transition">
+                <User className="h-5 w-5 text-white" />
+              </Link>
+            )}
+          </div>
+
+          {/* Row 2: Search bar full width */}
+          <div className="px-3 pb-2.5">
+            <SearchBar />
+          </div>
+        </div>
+
+        {/* === DESKTOP layout: single row === */}
+        <div className="hidden lg:flex max-w-[1200px] mx-auto h-20 items-center gap-3 px-4">
           {/* Logo */}
           <Link to="/" className="flex shrink-0 items-center gap-2">
             <div className="p-1.5 bg-white rounded-lg shadow-inner flex items-center justify-center">
               <Zap className="h-6 w-6 text-[#E30019] fill-[#E30019]" />
             </div>
-            <span className="font-extrabold text-xl md:text-2xl text-white tracking-tight">
+            <span className="font-extrabold text-2xl text-white tracking-tight">
               Tech<span className="text-[#FFE600]">Shop</span>
             </span>
           </Link>
 
-          {/* Catalog Button */}
-          <div className="relative shrink-0 z-[150]">
+          {/* Catalog Button — desktop only */}
+          <div className="relative hidden lg:block shrink-0 z-[150]">
             <button
               type="button"
               onClick={() => setOpenCategory(!openCategory)}
@@ -134,7 +180,7 @@ export default function NavBar() {
             )}
           </div>
 
-          {/* SearchBar */}
+          {/* SearchBar — desktop only */}
           <div className="min-w-0 flex-1">
             <SearchBar />
           </div>
@@ -242,30 +288,9 @@ export default function NavBar() {
                 </div>
               )}
             </div>
-          </div>
-
-          {/* Mobile Actions block */}
-          <div className="flex items-center gap-2 text-white lg:hidden ml-auto">
-            <Link to="/cart" className="relative p-2 rounded-md bg-[#B80014] hover:bg-[#A60012] transition">
-              <ShoppingCart className="h-5 w-5 text-white" />
-              {totalItems > 0 && (
-                <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#FFE600] px-1 text-[9px] font-bold text-black ring-1 ring-white">
-                  {totalItems}
-                </span>
-              )}
-            </Link>
-            {user ? (
-              <Link to="/profile" className="p-2 rounded-md bg-[#B80014] hover:bg-[#A60012] transition">
-                <User className="h-5 w-5 text-white" />
-              </Link>
-            ) : (
-              <Link to="/login" className="p-2 rounded-md bg-[#B80014] hover:bg-[#A60012] transition">
-                <User className="h-5 w-5 text-white" />
-              </Link>
-            )}
-          </div>
-        </div>
-      </div>
+          </div>{/* end desktop Action Links right */}
+        </div>{/* end desktop flex row */}
+      </div>{/* end bg-[#E30019] */}
 
       {/* Sub menu bottom header (Desktop) */}
       <div className="relative z-0 hidden border-b border-gray-200 bg-white lg:block shadow-sm">
