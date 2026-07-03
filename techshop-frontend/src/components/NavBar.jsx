@@ -1,7 +1,7 @@
 import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../store/AuthContext";
 import useCartStore from "../store/cartStore";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import {
   Menu, ShoppingCart, User, X, Search, Zap,
   LogOut, Package, Settings, ChevronDown, MapPin, Tag, Flame,
@@ -16,8 +16,6 @@ import SearchBar from "./SearchBar";
 export default function NavBar() {
   const [openCategory, setOpenCategory] = useState(false);
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
-  const [openUser, setOpenUser] = useState(false);
-  const userRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -36,24 +34,12 @@ export default function NavBar() {
 
   useEffect(() => {
     setOpenCategory(false);
-    setOpenUser(false);
     setOpenMobileMenu(false);
   }, [location]);
-
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (userRef.current && !userRef.current.contains(e.target)) {
-        setOpenUser(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   const handleLogout = () => {
     logout();
     clearLocal();
-    setOpenUser(false);
     navigate("/");
     toast.info("Đã đăng xuất!", { theme: "colored", autoClose: 2000 });
   };
@@ -68,11 +54,11 @@ export default function NavBar() {
         <img
           src="/gearvn-pc-gvn-t11-topbar.png"
           alt="TechShop khuyến mãi"
-          className="w-full h-8 object-cover object-center"
+          className="w-full h-8 object-contain object-center"
           onError={(e) => {
             e.currentTarget.style.display = "none";
             e.currentTarget.parentElement.textContent =
-              "✨ CHÀO MỪNG BẠN ĐẾN VỚI TECHSHOP - HỆ THỐNG MÁY TÍNH & THIẾT BỊ CÔNG NGHỆ CAO CẤP ✨";
+              "CHÀO MỪNG BẠN ĐẾN VỚI TECHSHOP - HỆ THỐNG MÁY TÍNH & THIẾT BỊ CÔNG NGHỆ CAO CẤP ✨";
             e.currentTarget.parentElement.className =
               "hidden bg-[#0A86FF] lg:block text-center py-1 text-xs text-white font-semibold";
           }}
@@ -102,13 +88,12 @@ export default function NavBar() {
             </button>
 
             {/* Logo */}
-            <Link to="/" className="flex shrink-0 items-center gap-1.5">
-              <div className="p-1 bg-white rounded-lg shadow-inner flex items-center justify-center">
-                <Zap className="h-5 w-5 text-[#E30019] fill-[#E30019]" />
-              </div>
-              <span className="font-extrabold text-lg text-white tracking-tight">
-                Tech<span className="text-[#FFE600]">Shop</span>
-              </span>
+            <Link to="/" className="flex shrink-0 items-center">
+              <img
+                src="/images/logo-navbar.png"
+                alt="TechShop"
+                className="h-9 w-auto object-contain"
+              />
             </Link>
 
             {/* Spacer */}
@@ -145,13 +130,12 @@ export default function NavBar() {
         {/* === DESKTOP layout: single row === */}
         <div className="hidden lg:flex max-w-[1200px] mx-auto h-20 items-center gap-3 px-4">
           {/* Logo */}
-          <Link to="/" className="flex shrink-0 items-center gap-2">
-            <div className="p-1.5 bg-white rounded-lg shadow-inner flex items-center justify-center">
-              <Zap className="h-6 w-6 text-[#E30019] fill-[#E30019]" />
-            </div>
-            <span className="font-extrabold text-2xl text-white tracking-tight">
-              Tech<span className="text-[#FFE600]">Shop</span>
-            </span>
+          <Link to="/" className="flex shrink-0 items-center">
+            <img
+              src="/images/logo-navbar.png"
+              alt="TechShop"
+              className="h-12 w-auto object-contain"
+            />
           </Link>
 
           {/* Catalog Button — desktop only */}
@@ -227,10 +211,9 @@ export default function NavBar() {
             </Link>
 
             {/* User Dropdown */}
-            <div ref={userRef} className="relative">
+            <div className="relative group">
               <button
                 type="button"
-                onClick={() => setOpenUser(!openUser)}
                 className="flex items-center gap-2 px-2 py-1.5 rounded-[6px] hover:bg-white/10 transition text-left"
               >
                 <User className="h-5 w-5 text-white" />
@@ -242,29 +225,31 @@ export default function NavBar() {
                 </div>
               </button>
 
-              {openUser && (
-                <div className="absolute right-0 top-full mt-3 w-64 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50 text-gray-800">
+              {/* Invisible bridge to keep hover active between button and menu */}
+              <div className="absolute right-0 top-full h-3 w-full" />
+
+              <div className="absolute right-0 top-[calc(100%+0.5rem)] w-64 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50 text-gray-800 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-150 pointer-events-none group-hover:pointer-events-auto">
                   <div className="px-4 py-3 bg-gradient-to-r from-red-50 to-red-100 border-b border-gray-100">
                     <p className="text-xs text-gray-500">Xin chào</p>
                     <p className="font-bold text-gray-900 truncate">{displayName}</p>
                     {user ? (
                       <span className="text-[10px] bg-red-600 text-white font-bold px-1.5 py-0.5 rounded uppercase">{user.role}</span>
                     ) : (
-                      <p className="text-xs text-gray-400">Vui lòng đăng nhập</p>
+                      <p className="text-xs text-gray-400">Vui lòng đăng nhập tài khoản để xem ưu đãi và thanh toán dễ dàng hơn.</p>
                     )}
                   </div>
 
                   {user ? (
                     <>
                       <div className="py-1">
-                        <Link to="/profile" onClick={() => setOpenUser(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
+                        <Link to="/profile" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
                           <User className="h-4 w-4" /> Hồ sơ cá nhân
                         </Link>
-                        <Link to="/orders" onClick={() => setOpenUser(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
+                        <Link to="/orders" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
                           <Package className="h-4 w-4" /> Đơn hàng của tôi
                         </Link>
                         {(user.role === "ADMIN" || user.role === "STAFF") && (
-                          <Link to="/admin" onClick={() => setOpenUser(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition font-medium">
+                          <Link to="/admin" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition font-medium">
                             <Settings className="h-4 w-4 text-red-600" /> Quản lý hệ thống
                           </Link>
                         )}
@@ -277,16 +262,15 @@ export default function NavBar() {
                     </>
                   ) : (
                     <div className="p-4 grid grid-cols-2 gap-2">
-                      <Link to="/login" onClick={() => setOpenUser(false)} className="flex h-9 items-center justify-center rounded bg-red-600 text-xs font-bold text-white transition hover:bg-red-700">
+                      <Link to="/login" className="flex h-9 items-center justify-center rounded bg-red-600 text-xs font-bold text-white transition hover:bg-red-700">
                         ĐĂNG NHẬP
                       </Link>
-                      <Link to="/register" onClick={() => setOpenUser(false)} className="flex h-9 items-center justify-center rounded border border-gray-300 text-xs font-bold text-gray-700 transition hover:bg-gray-50">
+                      <Link to="/register" className="flex h-9 items-center justify-center rounded border border-gray-300 text-xs font-bold text-gray-700 transition hover:bg-gray-50">
                         ĐĂNG KÝ
                       </Link>
                     </div>
                   )}
                 </div>
-              )}
             </div>
           </div>{/* end desktop Action Links right */}
         </div>{/* end desktop flex row */}
