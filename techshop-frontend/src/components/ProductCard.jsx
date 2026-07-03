@@ -51,7 +51,7 @@ export default function ProductCard({ product }) {
       )}
 
       {/* Image Block */}
-      <div className="relative w-full aspect-square bg-white flex items-center justify-center p-3 overflow-hidden">
+      <div className="relative w-full aspect-square bg-gray-50 flex items-center justify-center p-3 overflow-hidden">
         {product.imageUrl ? (
           <img
             src={product.imageUrl}
@@ -59,7 +59,9 @@ export default function ProductCard({ product }) {
             className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
             onError={(e) => {
               e.currentTarget.onerror = null;
-              e.currentTarget.src = "/placeholder.png";
+              // Fallback: dùng ảnh placeholder từ picsum dựa theo product id
+              const seed = product.id || Math.floor(Math.random() * 100);
+              e.currentTarget.src = `https://picsum.photos/seed/product${seed}/400/400`;
             }}
           />
         ) : (

@@ -58,7 +58,8 @@ export default function ChatBot() {
           className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-red-600 text-white shadow-lg hover:bg-red-700 transition-colors"
           aria-label="Mở chatbot"
         >
-          <MessageCircle size={24} />
+          <img src="/home/chatbot.png" alt="chatbot"
+            className="w-full h-full rounded-full object-contain" />
         </button>
       )}
 
@@ -68,7 +69,8 @@ export default function ChatBot() {
           {/* Header */}
           <div className="flex items-center justify-between rounded-t-2xl bg-red-600 px-4 py-3 text-white">
             <div className="flex items-center gap-2">
-              <Bot size={20} />
+              <img src="/home/chatbot.png" alt="chatbot"
+                className="w-6 h-6 rounded-full object-contain" />
               <span className="font-semibold">TechShop AI</span>
             </div>
             <button
@@ -89,15 +91,15 @@ export default function ChatBot() {
               >
                 {msg.role === "assistant" && (
                   <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
-                    <Bot size={14} />
+                    <img src="/home/chatbot.png" alt="chatbot"
+                      className="w-6 h-6 rounded-full object-contain" />
                   </div>
                 )}
                 <div
-                  className={`max-w-[75%] rounded-xl px-3 py-2 text-sm leading-relaxed ${
-                    msg.role === "user"
-                      ? "bg-red-600 text-white"
-                      : "bg-gray-100 text-gray-800"
-                  }`}
+                  className={`max-w-[75%] rounded-xl px-3 py-2 text-sm leading-relaxed ${msg.role === "user"
+                    ? "bg-red-600 text-white"
+                    : "bg-gray-100 text-gray-800"
+                    }`}
                 >
                   {msg.content}
                 </div>

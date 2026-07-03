@@ -3,14 +3,14 @@ import { Link } from "react-router-dom";
 const topRow = [
   { src: "/banner-laptop-gaming.png", alt: "Laptop Gaming", href: "/products?category=laptop-gaming" },
   { src: "/banner-laptop-office.png", alt: "Laptop Office", href: "/products?category=laptop" },
-  { src: "/banner-pc-i5-5060.png", alt: "PC i5 5060", href: "/products?category=pc-gvn" },
+  { src: "/banner-pc-i5-5060.png",    alt: "PC i5 5060",    href: "/products?category=pc" },
 ];
 
 const bottomRow = [
-  { src: "/banner-deal-hong-dieu.png", alt: "Deal hồng điều", href: "/products" },
-  { src: "/banner-monitor.png", alt: "Monitor", href: "/products?category=man-hinh" },
-  { src: "/banner-gaming-mouse.png", alt: "Gaming Mouse", href: "/products?category=chuot-lot-chuot" },
-  { src: "/banner-pc-rx6500xt.png", alt: "PC RX 6500XT", href: "/products?category=pc-gvn" },
+  { src: "/banner-deal-hong-dieu.png",  alt: "Deal hồng điều", href: "/products" },
+  { src: "/banner-monitor.png",         alt: "Monitor",         href: "/products?category=monitor" },
+  { src: "/banner-gaming-mouse.png",    alt: "Gaming Mouse",    href: "/products?category=mouse" },
+  { src: "/banner-pc-rx6500xt.png",     alt: "PC RX 6500XT",   href: "/products?category=pc" },
 ];
 
 function BannerCard({ item, heightClass = "h-[165px]" }) {

@@ -8,47 +8,64 @@ import { MENU_DATA } from "../data/megamenu";
 import { CATEGORY_MENU } from "../data/categoryMenu";
 
 export const sidebarItems = [
-  { id: "laptop", label: "Laptop", icon: "Laptop" },
-  { id: "laptop-gaming", label: "Laptop Gaming", icon: "Laptop" },
-  { id: "pc-gvn", label: "PC GVN", icon: "PcCase" },
-  { id: "main-cpu-vga", label: "Main, CPU, VGA", icon: "Cpu" },
-  { id: "case-nguon-tan", label: "Case, Nguồn, Tản", icon: "PcCase" },
-  { id: "storage-ram", label: "Ổ cứng, RAM, Thẻ nhớ", icon: "HardDrive" },
-  { id: "audio-webcam", label: "Loa, Micro, Webcam", icon: "Mic" },
-  { id: "monitor", label: "Màn hình", icon: "Monitor" },
-  { id: "keyboard", label: "Bàn phím", icon: "Keyboard" },
-  { id: "mouse-mousepad", label: "Chuột + Lót chuột", icon: "Mouse" },
-  { id: "headphones", label: "Tai nghe", icon: "Headphones" },
-  { id: "ghe-ban", label: "Ghế - Bàn", icon: "Armchair" },
-  { id: "handheld-console", label: "Handheld Console", icon: "Gamepad2" },
-  { id: "accessories", label: "Phụ kiện", icon: "Usb" },
+  { id: "laptop",         label: "Laptop",                icon: "Laptop" },
+  { id: "laptop-gaming",  label: "Laptop Gaming",          icon: "Laptop" },
+  { id: "pc",             label: "PC GVN",                 icon: "PcCase" },
+  { id: "main-cpu-vga",   label: "Main, CPU, VGA",         icon: "Cpu" },
+  { id: "case-nguon-tan", label: "Case, Nguồn, Tản",       icon: "PcCase" },
+  { id: "storage-ram",    label: "Ổ cứng, RAM, Thẻ nhớ",  icon: "HardDrive" },
+  { id: "audio-webcam",   label: "Loa, Micro, Webcam",     icon: "Mic" },
+  { id: "monitor",        label: "Màn hình",               icon: "Monitor" },
+  { id: "keyboard",       label: "Bàn phím",               icon: "Keyboard" },
+  { id: "mouse",          label: "Chuột + Lót chuột",      icon: "Mouse" },
+  { id: "headphone",      label: "Tai nghe",               icon: "Headphones" },
+  { id: "chair",          label: "Ghế - Bàn",              icon: "Armchair" },
+  { id: "console",        label: "Handheld Console",       icon: "Gamepad2" },
+  { id: "accessory",      label: "Phụ kiện",               icon: "Usb" },
   { id: "dich-vu-thong-tin", label: "Dịch vụ và thông tin", icon: "Wrench" },
 ];
 
 const slugAliasMap = {
+  // PC aliases
+  "pc-gvn": "pc",
+  pcgvn: "pc",
+  "pc-gaming": "pc",
+  pcgaming: "pc",
+  // Monitor aliases
+  "man-hinh": "monitor",
+  monitors: "monitor",
+  // Mouse aliases
+  "mouse-mousepad": "mouse",
+  mouses: "mouse",
+  mousepad: "mouse",
+  mousepads: "mouse",
+  "chuot-lot-chuot": "mouse",
+  // Keyboard aliases
+  "ban-phim": "keyboard",
+  keyboards: "keyboard",
+  // Headphone aliases
+  headphones: "headphone",
+  "tai-nghe": "headphone",
+  // Chair aliases
+  "ghe-ban": "chair",
+  "ghe-gaming": "chair",
+  // Console aliases
+  "handheld-console": "console",
+  "handheld-consoles": "console",
+  handheld: "console",
+  handheldconsole: "console",
+  // Accessory aliases
+  accessories: "accessory",
+  "phu-kien": "accessory",
+  // Laptop aliases
   laptopgaming: "laptop-gaming",
   laptopgamings: "laptop-gaming",
   "laptop-gamings": "laptop-gaming",
-  pcgaming: "pc-gvn",
-  "pc-gaming": "pc-gvn",
-  monitor: "man-hinh",
-  monitors: "man-hinh",
-  mouse: "chuot-lot-chuot",
-  mouses: "chuot-lot-chuot",
-  mousepad: "chuot-lot-chuot",
-  mousepads: "chuot-lot-chuot",
-  "mouse-mousepad" : "chuot-lot-chuot",
-  keyboard: "ban-phim",
-  keyboards: "ban-phim",
-  headphone: "tai-nghe",
-  headphones: "tai-nghe",
-  accessory: "phu-kien",
-  accessories: "phu-kien",
-  handheld: "handheld-console",
-  handheldconsole: "handheld-console",
-  "handheld-consoles": "handheld-console",
-  "storage-ram" : "o-cung-ram-the-nho",
-  "audio-webcam" : "loa-micro-webcam",
+  // Storage/Audio (DB không có danh mục này, giữ nguyên)
+  "storage-ram": "storage-ram",
+  "audio-webcam": "audio-webcam",
+  "o-cung-ram-the-nho": "storage-ram",
+  "loa-micro-webcam": "audio-webcam",
 };
 
 const fallbackCategory = (id, label) => ({

@@ -6,12 +6,12 @@ const LOCAL_RIGHT_BANNERS = [
   {
     src: "/gearvn-build-pc-sub-banner-t1-26.png",
     alt: "Build PC",
-    href: "/products?category=pc-gvn",
+    href: "/products?category=pc",
   },
   {
     src: "/gearvn-ban-phim-sub-banner-t1-26.png",
     alt: "Bàn phím",
-    href: "/products?category=ban-phim",
+    href: "/products?category=keyboard",
   },
 ];
 
@@ -24,12 +24,12 @@ const LOCAL_SLIDES = [
   {
     src: "/gearvn-pc-gvn-t11-slider.jpg",
     alt: "Hero 2",
-    href: "/products?category=pc-gvn",
+    href: "/products?category=pc",
   },
   {
     src: "/gearvn-man-hinh-t10-slider.jpg",
     alt: "Hero 3",
-    href: "/products?category=man-hinh",
+    href: "/products?category=monitor",
   },
   {
     src: "/gearvn-laptop-acer-predator-triton-14a-slider-t12.jpg",
@@ -49,7 +49,7 @@ const LOCAL_SLIDES = [
   {
     src: "/gearvn-pc-gvn-nvidia-sliders.jpg",
     alt: "Hero 7",
-    href: "/products?category=pc-gvn",
+    href: "/products?category=pc",
   },
 ];
 

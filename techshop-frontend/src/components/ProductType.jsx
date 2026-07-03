@@ -23,8 +23,8 @@ const CATEGORIES = [
   },
   {
     title: "PC GVN Lắp Ráp & Đồng Bộ",
-    categorySlug: "pc-gvn",
-    href: "/products?category=pc-gvn",
+    categorySlug: "pc",
+    href: "/products?category=pc",
     video: [
       "/product/PC.mp4",
       "/product/PC_1.mp4",
@@ -34,8 +34,8 @@ const CATEGORIES = [
   },
   {
     title: "Bàn Phím Cơ & Văn Phòng",
-    categorySlug: "ban-phim",
-    href: "/products?category=ban-phim",
+    categorySlug: "keyboard",
+    href: "/products?category=keyboard",
     video: [
       "/product/keyboard.mp4",
       "/product/keyboard_1.mp4",
@@ -46,8 +46,8 @@ const CATEGORIES = [
   },
   {
     title: "Màn Hình Hiển Thị Chính Hãng",
-    categorySlug: "man-hinh",
-    href: "/products?category=man-hinh",
+    categorySlug: "monitor",
+    href: "/products?category=monitor",
     video: [
       "/product/monitor.mp4",
       "/product/monitor_1.mp4",

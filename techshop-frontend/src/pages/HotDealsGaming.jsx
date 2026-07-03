@@ -4,10 +4,10 @@ import productApi from "../api/productApi";
 import ProductCard from "../components/ProductCard";
 
 const TABS = [
-  { key: "laptop-gaming", label: "Laptop\nGaming", sectionId: "laptop-gaming" },
-  { key: "laptop", label: "Laptop\nVăn Phòng", sectionId: "laptop-office" },
-  { key: "pc-gvn", label: "PC\nGVN", sectionId: "pc-gvn" },
-  { key: "man-hinh", label: "Màn\nHình", sectionId: "monitor" },
+  { key: "laptop-gaming", label: "Laptop\nGaming",     sectionId: "laptop-gaming" },
+  { key: "laptop",        label: "Laptop\nVăn Phòng",  sectionId: "laptop-office" },
+  { key: "pc",            label: "PC\nGVN",            sectionId: "pc-gvn" },
+  { key: "monitor",       label: "Màn\nHình",          sectionId: "monitor" },
 ];
 
 const PRICE_SECTIONS = [

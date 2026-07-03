@@ -58,6 +58,13 @@ const categoryAliasMap = {
   "loa": "speaker",
   "audio-webcam": "speaker",
   "micro": "microphone",
+  "pc-gvn": "pc",
+  "man-hinh": "monitor",
+  "ban-phim": "keyboard",
+  "chuot-lot-chuot": "mouse",
+  "mouse-mousepad": "mouse",
+  "ghe-ban": "chair",
+  "handheld-console": "console",
 };
 
 const accessoryTypeMap = {
@@ -70,9 +77,9 @@ const accessoryTypeMap = {
 const categoryPricePrefixMap = {
   accessory: "phu kien",
   headphone: "tai nghe",
-  "mouse-mousepad": "chuot-lot-chuot",
-  "ghe-ban": "ban ghe",
-  "handheld-console": "handheld",
+  mouse: "chuot-lot-chuot",
+  chair: "ban ghe",
+  console: "handheld",
 };
 
 export const resolveHref = (category, columnTitle, item) => {

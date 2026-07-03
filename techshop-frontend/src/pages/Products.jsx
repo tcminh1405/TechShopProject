@@ -20,7 +20,9 @@ const POPULAR_BRANDS = [
   "ASUS", "Acer", "MSI", "Lenovo", "Dell", "HP", "LG", "Apple",
   "Gigabyte", "Samsung", "Logitech", "Razer", "HyperX", "Corsair",
   "Steelseries", "Sony", "JBL", "AKKO", "Keychron", "ViewSonic",
-  "AOC", "BenQ", "Xiaomi",
+  "AOC", "BenQ", "Xiaomi", "Aula", "Warrior", "DXRacer", "E-Dra",
+  "Microsoft", "Nintendo", "Ugreen", "Tomtoc", "Anker", "Cooler Master",
+  "TechShop"
 ];
 
 const SORT_OPTIONS = [
@@ -46,6 +48,39 @@ function FilterSection({ title, children, defaultOpen = true }) {
   );
 }
 
+const categoryAliasMap = {
+  "pc-gvn": "pc",
+  pcgvn: "pc",
+  "pc-gaming": "pc",
+  pcgaming: "pc",
+  "man-hinh": "monitor",
+  monitors: "monitor",
+  "mouse-mousepad": "mouse",
+  mouses: "mouse",
+  mousepad: "mouse",
+  mousepads: "mouse",
+  "chuot-lot-chuot": "mouse",
+  "ban-phim": "keyboard",
+  keyboards: "keyboard",
+  headphones: "headphone",
+  "tai-nghe": "headphone",
+  "ghe-ban": "chair",
+  "ghe-gaming": "chair",
+  "handheld-console": "console",
+  "handheld-consoles": "console",
+  handheld: "console",
+  handheldconsole: "console",
+  accessories: "accessory",
+  "phu-kien": "accessory",
+  laptopgaming: "laptop-gaming",
+  laptopgamings: "laptop-gaming",
+  "laptop-gamings": "laptop-gaming",
+  "storage-ram": "storage-ram",
+  "audio-webcam": "audio-webcam",
+  "o-cung-ram-the-nho": "storage-ram",
+  "loa-micro-webcam": "audio-webcam",
+};
+
 export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
@@ -54,6 +89,7 @@ export default function Products() {
   const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(false);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+  const [availableBrands, setAvailableBrands] = useState(POPULAR_BRANDS);
 
   const search = searchParams.get("search") || "";
   const category = searchParams.get("category") || "";
@@ -61,10 +97,32 @@ export default function Products() {
   const priceRange = searchParams.get("price") || "";
   const sortBy = searchParams.get("sort") || "";
   const page = parseInt(searchParams.get("page") || "0");
+  const subcategory = searchParams.get("subcategory") || "";
+  const accessoryType = searchParams.get("accessoryType") || "";
+
+  const normalizedCategory = categoryAliasMap[category.toLowerCase()] || category;
 
   useEffect(() => {
     categoryApi.getAll().then((r) => setCategories(r.data || [])).catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (!normalizedCategory) {
+      setAvailableBrands(POPULAR_BRANDS);
+      return;
+    }
+
+    productApi.getFiltered({ category: normalizedCategory, size: 100 })
+      .then((r) => {
+        const list = r.data?.content || r.data || [];
+        const brands = Array.from(new Set(list.map((p) => p.brand).filter(Boolean)));
+        brands.sort((a, b) => a.localeCompare(b));
+        setAvailableBrands(brands.length > 0 ? brands : POPULAR_BRANDS);
+      })
+      .catch(() => {
+        setAvailableBrands(POPULAR_BRANDS);
+      });
+  }, [normalizedCategory]);
 
   useEffect(() => {
     setLoading(true);
@@ -81,10 +139,12 @@ export default function Products() {
     const params = {
       page,
       size: 20,
-      ...(category && { category }),
+      ...(normalizedCategory && { category: normalizedCategory }),
       ...(minPrice !== undefined && minPrice >= 0 && { minPrice }),
       ...(maxPrice !== undefined && maxPrice > 0 && { maxPrice }),
       ...(brand && { brand }),
+      ...(subcategory && { subcategory }),
+      ...(accessoryType && { accessoryType }),
       ...(sortBy && { sort: sortBy }),
       ...(search && { keyword: search }),
     };
@@ -98,7 +158,7 @@ export default function Products() {
       })
       .catch(() => setProducts([]))
       .finally(() => setLoading(false));
-  }, [search, category, brand, priceRange, sortBy, page]);
+  }, [search, normalizedCategory, brand, priceRange, subcategory, accessoryType, sortBy, page]);
 
   const setParam = (key, value) => {
     const p = new URLSearchParams(searchParams);
@@ -112,10 +172,10 @@ export default function Products() {
     setSearchParams(new URLSearchParams());
   };
 
-  const hasFilters = search || category || brand || priceRange;
+  const hasFilters = search || category || brand || priceRange || subcategory || accessoryType;
 
   const activeCategory = categories.find(
-    (c) => c.id == category || c.slug === category || c.name?.toLowerCase() === category?.toLowerCase()
+    (c) => String(c.id) === String(normalizedCategory) || c.slug === normalizedCategory || c.name?.toLowerCase() === normalizedCategory?.toLowerCase()
   );
 
   const Filters = () => (
@@ -125,16 +185,16 @@ export default function Products() {
         <div className="space-y-1.5 max-h-60 overflow-y-auto pr-1">
           <button
             onClick={() => setParam("category", "")}
-            className={`w-full text-left px-2.5 py-1.5 rounded text-xs font-medium transition ${!category ? "bg-[#E30019] text-white" : "text-gray-600 hover:bg-gray-50"}`}
+            className={`w-full text-left px-2.5 py-1.5 rounded text-xs font-medium transition ${!normalizedCategory ? "bg-[#E30019] text-white" : "text-gray-600 hover:bg-gray-50"}`}
           >
             Tất cả sản phẩm
           </button>
           {categories.map((c) => (
             <button
               key={c.id}
-              onClick={() => setParam("category", c.slug || c.id)}
+              onClick={() => setParam("category", c.slug || String(c.id))}
               className={`w-full text-left px-2.5 py-1.5 rounded text-xs font-medium transition ${
-                (category == c.id || category === c.slug) ? "bg-[#E30019] text-white" : "text-gray-600 hover:bg-gray-50"
+                (String(normalizedCategory) === String(c.id) || normalizedCategory === c.slug) ? "bg-[#E30019] text-white" : "text-gray-600 hover:bg-gray-50"
               }`}
             >
               {c.name}
@@ -146,7 +206,7 @@ export default function Products() {
       {/* Brands */}
       <FilterSection title="Thương hiệu">
         <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto">
-          {POPULAR_BRANDS.map((b) => (
+          {availableBrands.map((b) => (
             <button
               key={b}
               onClick={() => setParam("brand", brand === b ? "" : b)}
@@ -248,7 +308,7 @@ export default function Products() {
               </div>
 
               {/* Active filters pills */}
-              {(brand || priceRange) && (
+              {(brand || priceRange || subcategory || accessoryType) && (
                 <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-gray-100">
                   {brand && (
                     <span className="flex items-center gap-1 bg-red-50 text-[#E30019] border border-red-200 text-xs font-bold px-2 py-1 rounded-full">
@@ -260,6 +320,18 @@ export default function Products() {
                     <span className="flex items-center gap-1 bg-red-50 text-[#E30019] border border-red-200 text-xs font-bold px-2 py-1 rounded-full">
                       {PRICE_RANGES.find(r => r.value === priceRange)?.label}
                       <button onClick={() => setParam("price", "")}><X className="h-3 w-3" /></button>
+                    </span>
+                  )}
+                  {subcategory && (
+                    <span className="flex items-center gap-1 bg-red-50 text-[#E30019] border border-red-200 text-xs font-bold px-2 py-1 rounded-full capitalize">
+                      {subcategory}
+                      <button onClick={() => setParam("subcategory", "")}><X className="h-3 w-3" /></button>
+                    </span>
+                  )}
+                  {accessoryType && (
+                    <span className="flex items-center gap-1 bg-red-50 text-[#E30019] border border-red-200 text-xs font-bold px-2 py-1 rounded-full capitalize">
+                      {accessoryType.replace(/-/g, " ")}
+                      <button onClick={() => setParam("accessoryType", "")}><X className="h-3 w-3" /></button>
                     </span>
                   )}
                 </div>

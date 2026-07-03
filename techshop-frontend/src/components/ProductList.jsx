@@ -15,9 +15,14 @@ export function ProductList({ products, category }) {
         return prodCat === targetCat || 
                (targetCat === "laptop" && (prodCat === "1" || prodCat === "laptop")) ||
                (targetCat === "laptop-gaming" && (prodCat === "2" || prodCat === "laptop-gaming")) ||
-               (targetCat === "pc" && (prodCat === "3" || prodCat === "pc-gvn")) ||
-               (targetCat === "keyboard" && (prodCat === "9" || prodCat === "ban-phim")) ||
-               (targetCat === "monitor" && (prodCat === "8" || prodCat === "man-hinh"));
+               (targetCat === "pc" && (prodCat === "3" || prodCat === "pc-gvn" || prodCat === "pc")) ||
+               (targetCat === "monitor" && (prodCat === "4" || prodCat === "man-hinh" || prodCat === "monitor")) ||
+               (targetCat === "keyboard" && (prodCat === "5" || prodCat === "ban-phim" || prodCat === "keyboard")) ||
+               (targetCat === "mouse" && (prodCat === "6" || prodCat === "chuot-lot-chuot" || prodCat === "mouse")) ||
+               (targetCat === "headphone" && (prodCat === "7" || prodCat === "tai-nghe" || prodCat === "headphone")) ||
+               (targetCat === "chair" && (prodCat === "8" || prodCat === "ghe-ban" || prodCat === "chair")) ||
+               (targetCat === "console" && (prodCat === "9" || prodCat === "handheld-console" || prodCat === "console")) ||
+               (targetCat === "accessory" && (prodCat === "10" || prodCat === "phu-kien" || prodCat === "accessory"));
       }
     )
     .slice(0, 10);

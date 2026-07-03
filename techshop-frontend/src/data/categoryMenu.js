@@ -146,7 +146,7 @@ export const CATEGORY_MENU = [
     ],
   },
   {
-    id: "pc-gvn",
+    id: "pc",
     label: "PC GVN",
     sections: [
       {
@@ -263,7 +263,7 @@ export const CATEGORY_MENU = [
     ],
   },
   {
-    id: "man-hinh",
+    id: "monitor",
     label: "Màn hình",
     sections: [
       {
@@ -289,7 +289,7 @@ export const CATEGORY_MENU = [
     ],
   },
   {
-    id: "ban-phim",
+    id: "keyboard",
     label: "Bàn phím",
     sections: [
       {
@@ -307,7 +307,7 @@ export const CATEGORY_MENU = [
     ],
   },
   {
-    id: "chuot-lot-chuot",
+    id: "mouse",
     label: "Chuột + Lót chuột",
     sections: [
       {
@@ -333,7 +333,7 @@ export const CATEGORY_MENU = [
     ],
   },
   {
-    id: "tai-nghe",
+    id: "headphone",
     label: "Tai Nghe",
     sections: [
       {
@@ -355,7 +355,7 @@ export const CATEGORY_MENU = [
     ],
   },
   {
-    id: "ghe-ban",
+    id: "chair",
     label: "Ghế - Bàn",
     sections: [
       {
@@ -381,7 +381,7 @@ export const CATEGORY_MENU = [
     ],
   },
   {
-    id: "handheld-console",
+    id: "console",
     label: "Handheld Console",
     sections: [
       {
@@ -399,7 +399,7 @@ export const CATEGORY_MENU = [
     ],
   },
   {
-    id: "phu-kien",
+    id: "accessory",
     label: "Phụ kiện",
     sections: [
       {

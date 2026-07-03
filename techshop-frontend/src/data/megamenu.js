@@ -42,8 +42,8 @@ export const MENU_DATA = [
   { 
     label: "PC GVN", 
     icon: "PcCase", 
-    href: "/category/pc-gvn",
-    id: "pc-gvn",
+    href: "/category/pc",
+    id: "pc",
     content: {
       columns: [
         {title: "PC THEO GIÁ", items: ["PC DƯỚI 30 TRIỆU", "PC TỪ 30 - 50 TRIỆU", "PC TỪ 50 - 70 TRIỆU", "PC TỪ 70 - 100 TRIỆU", "PC TỪ 100 - 200 TRIỆU", "PC TRÊN 200 TRIỆU"]},
@@ -129,7 +129,7 @@ export const MENU_DATA = [
   { 
     label: "Màn hình", 
     icon: "Monitor", 
-    href: "/category/man-hinh",
+    href: "/category/monitor",
     id: "monitor",
     content: {
       columns: [
@@ -149,7 +149,7 @@ export const MENU_DATA = [
   { 
     label: "Bàn phím", 
     icon: "Keyboard", 
-    href: "/category/ban-phim",
+    href: "/category/keyboard",
     id: "keyboard",
     content: {
       columns: [
@@ -165,8 +165,8 @@ export const MENU_DATA = [
   { 
     label: "Chuột + Lót chuột", 
     icon: "Mouse", 
-    href: "/category/chuot-lot-chuot",
-    id: "mouse-mousepad",
+    href: "/category/mouse",
+    id: "mouse",
     content: {
       columns: [
         {title: "Thương hiệu chuột", items: ["Logitech", "Razer", "Corsair", "Microsoft", "Dare U","ASUS"]},
@@ -180,8 +180,8 @@ export const MENU_DATA = [
   { 
     label: "Tai nghe",
     icon: "Headphones",
-    href: "/category/tai-nghe",
-    id: "headphones",
+    href: "/category/headphone",
+    id: "headphone",
     content: {
       columns: [
         {title: "Thương hiệu tai nghe", items: ["ASUS", "HyperX", "Razer", "ONIKUMA"]},
@@ -194,8 +194,8 @@ export const MENU_DATA = [
   { 
     label: "Ghế - Bàn", 
     icon: "Armchair",
-    href: "/category/ghe-ban",
-    id: "ghe-ban",
+    href: "/category/chair",
+    id: "chair",
     content: {
       columns: [
         {title: "Thương hiệu ghế Gaming", items: ["Corsair", "Warrior", "E-DRA", "DXRacer", "Cougar", "AKRaing", "Razer"]},
@@ -210,8 +210,8 @@ export const MENU_DATA = [
   {
     label: "Handheld, Console", 
     icon: "Gamepad2", 
-    href: "/category/handheld-console",
-    id: "handheld-console",
+    href: "/category/console",
+    id: "console",
     content: {
       columns: [
         {title: "Handheld PC", items: ["MSI Claw", "Legion Go"]},
@@ -224,8 +224,8 @@ export const MENU_DATA = [
   {
     label: "Phụ kiện (Hub, sạc, cáp..)", 
     icon: "Usb", 
-    href: "/category/phu-kien",
-    id: "accessories",
+    href: "/category/accessory",
+    id: "accessory",
     content: {
       columns: [
         {title: "Hub, sạc, cáp", items: ["Hub chuyển đổi", "Dây cáp", "Củ sạc"]},
