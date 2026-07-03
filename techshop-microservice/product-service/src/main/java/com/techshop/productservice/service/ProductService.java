@@ -53,11 +53,13 @@ public class ProductService {
             BigDecimal minPrice,
             BigDecimal maxPrice,
             String keyword,
+            String subcategory,
+            String accessoryType,
             String sortBy,
             int page,
             int size) {
-        log.info("Fetching products with filters: category={}, brand={}, minPrice={}, maxPrice={}, keyword={}, sort={}",
-                categorySlug, brand, minPrice, maxPrice, keyword, sortBy);
+        log.info("Fetching products with filters: category={}, brand={}, minPrice={}, maxPrice={}, keyword={}, subcategory={}, accessoryType={}, sort={}",
+                categorySlug, brand, minPrice, maxPrice, keyword, subcategory, accessoryType, sortBy);
 
         // Build sort
         Sort sort = Sort.unsorted();
@@ -75,8 +77,10 @@ public class ProductService {
         String catSlug = (categorySlug != null && !categorySlug.isBlank()) ? categorySlug.trim() : null;
         String brandFilter = (brand != null && !brand.isBlank()) ? brand.trim() : null;
         String kw = (keyword != null && !keyword.isBlank()) ? keyword.trim() : null;
+        String subcat = (subcategory != null && !subcategory.isBlank()) ? subcategory.trim() : null;
+        String accType = (accessoryType != null && !accessoryType.isBlank()) ? accessoryType.trim() : null;
 
-        return productRepository.findWithFilters(catSlug, brandFilter, minPrice, maxPrice, kw, pageable);
+        return productRepository.findWithFilters(catSlug, brandFilter, minPrice, maxPrice, kw, subcat, accType, pageable);
     }
 
     public Page<Product> search(String keyword, Pageable pageable) {

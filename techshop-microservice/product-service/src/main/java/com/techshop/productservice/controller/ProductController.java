@@ -35,6 +35,8 @@ public class ProductController {
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String subcategory,
+            @RequestParam(required = false) String accessoryType,
             @RequestParam(required = false) String sort,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
@@ -45,11 +47,13 @@ public class ProductController {
                 || minPrice != null
                 || maxPrice != null
                 || (keyword != null && !keyword.isBlank())
+                || (subcategory != null && !subcategory.isBlank())
+                || (accessoryType != null && !accessoryType.isBlank())
                 || (sort != null && !sort.isBlank());
 
         if (hasFilters) {
             return ResponseEntity.ok(productService.getFiltered(
-                    category, brand, minPrice, maxPrice, keyword, sort, page, size));
+                    category, brand, minPrice, maxPrice, keyword, subcategory, accessoryType, sort, page, size));
         }
 
         Pageable pageable = PageRequest.of(page, size);

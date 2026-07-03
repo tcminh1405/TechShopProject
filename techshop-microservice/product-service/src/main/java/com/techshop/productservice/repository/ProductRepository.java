@@ -32,21 +32,25 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
            "(LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(p.brand) LIKE LOWER(CONCAT('%', :keyword, '%')))")
     Page<Product> findByCategorySlugAndKeyword(@Param("slug") String slug, @Param("keyword") String keyword, Pageable pageable);
 
-    // Advanced filter: optional brand, optional minPrice, optional maxPrice, optional category slug
+    // Advanced filter: optional brand, optional minPrice, optional maxPrice, optional category slug, optional subcategory, optional accessoryType
     @Query("SELECT p FROM Product p LEFT JOIN p.category c WHERE p.active = true " +
            "AND (:categorySlug IS NULL OR LOWER(c.slug) = LOWER(:categorySlug)) " +
-           "AND (:brand IS NULL OR LOWER(p.brand) = LOWER(:brand)) " +
+           "AND (:brand IS NULL OR TRIM(LOWER(p.brand)) = TRIM(LOWER(:brand))) " +
            "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
            "AND (:maxPrice IS NULL OR p.price <= :maxPrice) " +
-           "AND (:keyword IS NULL OR " +
+           "AND (:subcategory IS NULL OR LOWER(p.subcategory) = LOWER(:subcategory)) " +
+           "AND (:accessoryType IS NULL OR LOWER(p.accessoryType) = LOWER(:accessoryType)) " +
+           "AND (:keyword IS NULL OR (" +
            "     LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-           "     LOWER(p.brand) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+           "     LOWER(p.brand) LIKE LOWER(CONCAT('%', :keyword, '%'))))")
     Page<Product> findWithFilters(
             @Param("categorySlug") String categorySlug,
             @Param("brand") String brand,
             @Param("minPrice") java.math.BigDecimal minPrice,
             @Param("maxPrice") java.math.BigDecimal maxPrice,
             @Param("keyword") String keyword,
+            @Param("subcategory") String subcategory,
+            @Param("accessoryType") String accessoryType,
             Pageable pageable);
 
     // Count active products by category slug
