@@ -53,8 +53,8 @@ public class VNPayService {
             vnp_Params.put("vnp_ReturnUrl", returnUrl != null ? returnUrl : vnpayConfig.getReturnUrl());
             vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
-            // Force NCB bank code for sandbox testing (shows test card form directly)
-            vnp_Params.put("vnp_BankCode", "NCB");
+            // vnp_BankCode is optional. If not set, VNPay will show the payment method selection screen.
+            // This prevents "Ngân hàng thanh toán không được hỗ trợ" (code=76) error in sandbox.
 
             Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
             SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -109,11 +109,10 @@ public class VNPayService {
             vnp_Params.put("vnp_ReturnUrl", vnpayConfig.getReturnUrl());
             vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
-            // Force a specific payment method to avoid the generic option list on VNPay
-            String bankCode = (request.getBankCode() != null && !request.getBankCode().isBlank())
-                    ? request.getBankCode().trim()
-                    : "NCB"; // default to NCB test card form for sandbox testing
-            vnp_Params.put("vnp_BankCode", bankCode);
+            // If bankCode is provided, add it to parameters. Otherwise, omit it to let the user select.
+            if (request.getBankCode() != null && !request.getBankCode().isBlank()) {
+                vnp_Params.put("vnp_BankCode", request.getBankCode().trim());
+            }
 
             Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
             SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -233,7 +232,7 @@ public class VNPayService {
                         .success(false)
                         .transactionNo(bankTranNo)
                         .orderId(txnRef)
-                        .message("Payment failed with response code: " + responseCode)
+                        .message(getFriendlyMessage(responseCode))
                         .build();
             }
 
@@ -243,6 +242,28 @@ public class VNPayService {
                     .success(false)
                     .message("Error processing payment callback: " + e.getMessage())
                     .build();
+        }
+    }
+
+    /**
+     * Map VNPay response codes to friendly Vietnamese messages
+     */
+    private String getFriendlyMessage(String responseCode) {
+        if (responseCode == null) return "Thanh toán thất bại";
+        switch (responseCode) {
+            case "09": return "Thẻ/Tài khoản chưa đăng ký dịch vụ InternetBanking tại ngân hàng.";
+            case "10": return "Xác thực thông tin thẻ/tài khoản không đúng quá 3 lần.";
+            case "11": return "Đã hết hạn chờ thanh toán. Vui lòng thực hiện lại.";
+            case "12": return "Thẻ/Tài khoản của quý khách đang bị khóa.";
+            case "13": return "Nhập sai mật khẩu xác thực giao dịch (OTP). Vui lòng thử lại.";
+            case "24": return "Giao dịch đã bị hủy bởi quý khách.";
+            case "51": return "Số dư tài khoản không đủ để thực hiện thanh toán.";
+            case "65": return "Giao dịch vượt quá hạn mức thanh toán trong ngày.";
+            case "75": return "Ngân hàng thanh toán đang bảo trì.";
+            case "76": return "Ngân hàng thanh toán không được hỗ trợ.";
+            case "79": return "Nhập sai mật khẩu thanh toán quá số lần quy định.";
+            case "99": return "Lỗi không xác định từ phía ngân hàng liên kết.";
+            default: return "Thanh toán thất bại (Mã lỗi: " + responseCode + ")";
         }
     }
 
@@ -260,3 +281,4 @@ public class VNPayService {
         return xfHeader.split(",")[0];
     }
 }
+

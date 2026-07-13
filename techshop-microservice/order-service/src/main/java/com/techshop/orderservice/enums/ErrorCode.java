@@ -16,7 +16,8 @@ public enum ErrorCode {
     SERVICE_UNAVAILABLE(3008, "Dịch vụ kiểm tra kho hiện không khả dụng.", HttpStatus.SERVICE_UNAVAILABLE),
     CART_ITEM_NOT_FOUND(3009, "Không tìm thấy sản phẩm trong giỏ hàng!", HttpStatus.NOT_FOUND),
     CANCEL_NOT_ALLOWED(3010, "Chỉ có thể hủy đơn hàng ở trạng thái PENDING!", HttpStatus.BAD_REQUEST),
-    FORBIDDEN_ORDER_ACCESS(3011, "Bạn không có quyền thao tác trên đơn hàng này!", HttpStatus.FORBIDDEN)
+    FORBIDDEN_ORDER_ACCESS(3011, "Bạn không có quyền thao tác trên đơn hàng này!", HttpStatus.FORBIDDEN),
+    ORDER_NOT_PAID(3012, "Đơn hàng thanh toán qua VNPay chưa được thanh toán thành công!", HttpStatus.BAD_REQUEST)
     ;
 
     private final int code;

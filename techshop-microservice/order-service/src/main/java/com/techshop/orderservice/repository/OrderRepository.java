@@ -15,6 +15,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> findByUserEmail(String email, Pageable pageable);
     Optional<Order> findByOrderCode(String orderCode);
     Page<Order> findByStatus(Order.OrderStatus status, Pageable pageable);
+    Page<Order> findByStatusIn(List<Order.OrderStatus> statuses, Pageable pageable);
 
     @Query("SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.items WHERE o.id IN :ids")
     List<Order> findByIdInWithItems(@Param("ids") List<Long> ids);
@@ -22,4 +23,16 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     // ✅ THÊM MỚI: Fetch single order kèm items, tránh LazyInitializationException
     @Query("SELECT o FROM Order o LEFT JOIN FETCH o.items WHERE o.id = :id")
     Optional<Order> findByIdWithItems(@Param("id") Long id);
+
+    @Query("SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.items " +
+           "WHERE o.status = :status " +
+           "AND o.paymentStatus = :paymentStatus " +
+           "AND o.paymentMethod = :paymentMethod " +
+           "AND o.createdAt < :expiryTime")
+    List<Order> findExpiredOrders(
+            @Param("status") Order.OrderStatus status,
+            @Param("paymentStatus") Order.PaymentStatus paymentStatus,
+            @Param("paymentMethod") Order.PaymentMethod paymentMethod,
+            @Param("expiryTime") java.time.LocalDateTime expiryTime
+    );
 }

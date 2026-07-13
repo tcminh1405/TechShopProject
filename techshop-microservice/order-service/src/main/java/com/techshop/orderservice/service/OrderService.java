@@ -100,8 +100,13 @@ public class OrderService {
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
     }
 
-    public Page<Order> getAll(Pageable pageable) {
-        Page<Order> ordersPage = orderRepository.findAll(pageable);
+    public Page<Order> getAll(List<Order.OrderStatus> statuses, Pageable pageable) {
+        Page<Order> ordersPage;
+        if (statuses != null && !statuses.isEmpty()) {
+            ordersPage = orderRepository.findByStatusIn(statuses, pageable);
+        } else {
+            ordersPage = orderRepository.findAll(pageable);
+        }
 
         if (!ordersPage.isEmpty()) {
             List<Long> orderIds = ordersPage.getContent().stream()
@@ -322,6 +327,15 @@ public class OrderService {
         Order order = getById(id);
         Order.OrderStatus oldStatus = order.getStatus();
 
+        // Ngăn chặn chuyển trạng thái sang xử lý/giao hàng/đã giao nếu là đơn VNPay nhưng chưa thanh toán
+        if (order.getPaymentMethod() == Order.PaymentMethod.VNPAY 
+                && order.getPaymentStatus() != Order.PaymentStatus.PAID
+                && (status == Order.OrderStatus.PROCESSING 
+                    || status == Order.OrderStatus.SHIPPED 
+                    || status == Order.OrderStatus.DELIVERED)) {
+            throw new AppException(ErrorCode.ORDER_NOT_PAID);
+        }
+
         order.setStatus(status);
         log.info("Đơn hàng {} chuyển trạng thái từ {} sang {}", id, oldStatus, status);
 
@@ -423,5 +437,100 @@ public class OrderService {
 
         order.setStatus(Order.OrderStatus.CANCELLED);
         return orderRepository.save(order);
+    }
+
+    @Transactional
+    public Order repayOrder(Long id) {
+        Order order = getById(id);
+
+        if (order.getPaymentMethod() != Order.PaymentMethod.VNPAY) {
+            throw new AppException(ErrorCode.CANCEL_NOT_ALLOWED);
+        }
+
+        if (order.getStatus() != Order.OrderStatus.PENDING) {
+            throw new AppException(ErrorCode.CANCEL_NOT_ALLOWED);
+        }
+
+        if (order.getPaymentStatus() == Order.PaymentStatus.PAID) {
+            throw new AppException(ErrorCode.INVALID_KEY);
+        }
+
+        try {
+            PaymentResponse payment = null;
+            try {
+                // Kiểm tra xem đã có giao dịch thanh toán trong payment-service chưa
+                payment = paymentClient.getByOrderId(order.getId());
+            } catch (feign.FeignException.NotFound e) {
+                // Nếu chưa có, tạo mới giao dịch thanh toán
+                log.info("Không tìm thấy giao dịch thanh toán cho đơn hàng {}, tiến hành tạo mới", order.getId());
+                
+                List<CreatePaymentRequest.OrderItemDto> paymentItems = order.getItems().stream()
+                        .map(item -> CreatePaymentRequest.OrderItemDto.builder()
+                                .productId(item.getProductId())
+                                .productName(item.getProductName())
+                                .quantity(item.getQuantity())
+                                .unitPrice(item.getUnitPrice())
+                                .subtotal(item.getSubtotal())
+                                .build())
+                        .collect(Collectors.toList());
+
+                CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder()
+                        .orderId(order.getId())
+                        .userId(order.getUserId())
+                        .amount(order.getTotalAmount())
+                        .method(order.getPaymentMethod().name())
+                        .returnUrl(paymentReturnUrl)
+                        .orderCode(order.getOrderCode())
+                        .userEmail(order.getUserEmail())
+                        .receiverName(order.getReceiverName())
+                        .items(paymentItems)
+                        .build();
+
+                payment = paymentClient.createPayment(paymentRequest);
+            }
+
+            // Nếu đã có giao dịch (hoặc vừa tạo xong), tái tạo URL thanh toán VNPay
+            if (payment != null) {
+                PaymentResponse regenerated = paymentClient.regeneratePaymentUrl(order.getId(), paymentReturnUrl);
+                if (regenerated.getPaymentUrl() != null && !regenerated.getPaymentUrl().isEmpty()) {
+                    order.setPaymentUrl(regenerated.getPaymentUrl());
+                    order = orderRepository.save(order);
+                }
+            }
+        } catch (Exception e) {
+            log.error("Lỗi tái tạo URL thanh toán cho đơn hàng {}: {}", order.getId(), e.getMessage());
+            throw new AppException(ErrorCode.SERVICE_UNAVAILABLE);
+        }
+
+        return order;
+    }
+
+    @Transactional
+    public void cancelOrderSystem(Order order) {
+        log.info("Hệ thống tự động hủy đơn hàng {} do quá hạn thanh toán, giải phóng kho", order.getOrderCode());
+        for (OrderItem item : order.getItems()) {
+            try {
+                InventoryClient.StockRequest releaseRequest = new InventoryClient.StockRequest(
+                        item.getQuantity(),
+                        order.getOrderCode()
+                );
+
+                ResponseEntity<InventoryClient.StockOperationResponse> releaseResponse =
+                        inventoryClient.releaseStock(item.getProductId(), releaseRequest);
+
+                if (releaseResponse.getStatusCode().is2xxSuccessful()) {
+                    log.info("Giải phóng kho thành công: productId={}, quantity={}",
+                            item.getProductId(), item.getQuantity());
+                } else {
+                    log.warn("Giải phóng kho thất bại cho productId={}", item.getProductId());
+                }
+            } catch (Exception e) {
+                log.error("Lỗi khi giải phóng kho cho sản phẩm productId={}: {}", item.getProductId(), e.getMessage());
+            }
+        }
+
+        order.setStatus(Order.OrderStatus.CANCELLED);
+        order.setPaymentStatus(Order.PaymentStatus.FAILED);
+        orderRepository.save(order);
     }
 }

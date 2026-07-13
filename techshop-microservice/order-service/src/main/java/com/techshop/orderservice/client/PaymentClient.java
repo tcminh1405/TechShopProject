@@ -11,4 +11,13 @@ public interface PaymentClient {
     
     @PostMapping("/payments")
     PaymentResponse createPayment(@RequestBody CreatePaymentRequest request);
+
+    @PostMapping("/payments/order/{orderId}/regenerate")
+    PaymentResponse regeneratePaymentUrl(
+            @org.springframework.web.bind.annotation.PathVariable("orderId") Long orderId,
+            @org.springframework.web.bind.annotation.RequestParam("returnUrl") String returnUrl
+    );
+
+    @org.springframework.web.bind.annotation.GetMapping("/payments/order/{orderId}")
+    PaymentResponse getByOrderId(@org.springframework.web.bind.annotation.PathVariable("orderId") Long orderId);
 }

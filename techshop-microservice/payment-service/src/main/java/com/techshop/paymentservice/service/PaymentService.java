@@ -112,11 +112,46 @@ public class PaymentService {
     }
 
     @Transactional
+    public PaymentResponse regeneratePaymentUrl(Long orderId, String returnUrl) {
+        log.info("Tạo lại payment URL cho đơn hàng: orderId={}", orderId);
+        Payment payment = paymentRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new AppException(ErrorCode.PAYMENT_NOT_FOUND));
+
+        if (payment.getStatus() == Payment.PaymentStatus.PAID) {
+            throw new AppException(ErrorCode.ALREADY_PAID);
+        }
+
+        // Tạo transactionId mới để reset phiên thanh toán và thời gian hết hạn trên VNPay
+        String newTransactionId = UUID.randomUUID().toString();
+        payment.setTransactionId(newTransactionId);
+        payment.setStatus(Payment.PaymentStatus.PENDING);
+
+        String paymentUrl = vnPayService.createPaymentUrl(
+                newTransactionId,
+                payment.getAmount(),
+                "Thanh toan don hang " + payment.getOrderId(),
+                returnUrl
+        );
+        payment.setPaymentUrl(paymentUrl);
+        Payment savedPayment = paymentRepository.save(payment);
+
+        log.info("Đã tạo lại payment URL thành công: orderId={}, newTransactionId={}", orderId, newTransactionId);
+        return mapToResponse(savedPayment);
+    }
+
+    @Transactional
     public PaymentResponse verifyPayment(String transactionId, String vnpResponseCode) {
         log.info("Xác minh payment VNPay: transactionId={}, responseCode={}", transactionId, vnpResponseCode);
 
         Payment payment = paymentRepository.findByTransactionId(transactionId)
                 .orElseThrow(() -> new AppException(ErrorCode.PAYMENT_NOT_FOUND));
+
+        // Tránh xử lý trùng lặp nếu giao dịch đã hoàn thành hoặc đã thất bại
+        if (payment.getStatus() == Payment.PaymentStatus.PAID || payment.getStatus() == Payment.PaymentStatus.FAILED) {
+            log.warn("Giao dịch thanh toán {} đã được xử lý từ trước với trạng thái {}. Bỏ qua xử lý trùng lặp.", 
+                    transactionId, payment.getStatus());
+            return mapToResponse(payment);
+        }
 
         if ("00".equals(vnpResponseCode)) {
             payment.setStatus(Payment.PaymentStatus.PAID);

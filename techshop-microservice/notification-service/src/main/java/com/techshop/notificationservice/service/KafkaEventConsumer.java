@@ -102,6 +102,13 @@ public class KafkaEventConsumer {
         log.info("[Kafka Consumer] Nhận event OrderPlaced: orderId={}, orderCode={}, email={}",
                 event.getOrderId(), event.getOrderCode(), event.getUserEmail());
 
+        // Bỏ qua gửi email/thông báo đặt hàng ngay lập tức đối với đơn thanh toán qua VNPay.
+        // Đơn VNPay chỉ được xác nhận bằng email/thông báo sau khi đã thanh toán thành công.
+        if ("VNPAY".equalsIgnoreCase(event.getPaymentMethod())) {
+            log.info("[Kafka Consumer] Đơn hàng VNPay {} đang chờ thanh toán. Bỏ qua gửi email xác nhận ngay lập tức.", event.getOrderCode());
+            return;
+        }
+
         // Gửi email xác nhận đơn hàng
         try {
             OrderConfirmEmailRequest emailRequest = new OrderConfirmEmailRequest();

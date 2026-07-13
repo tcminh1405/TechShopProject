@@ -8,7 +8,8 @@ public enum ErrorCode {
     INVALID_KEY(1002, "Khóa cấu hình validation không hợp lệ.", HttpStatus.BAD_REQUEST),
     INVALID_AMOUNT(4001, "Số tiền thanh toán không hợp lệ!", HttpStatus.BAD_REQUEST),
     PAYMENT_NOT_FOUND(4002, "Không tìm thấy giao dịch thanh toán!", HttpStatus.NOT_FOUND),
-    VNPAY_SIGNATURE_INVALID(4003, "Chữ ký VNPAY không hợp lệ!", HttpStatus.BAD_REQUEST)
+    VNPAY_SIGNATURE_INVALID(4003, "Chữ ký VNPAY không hợp lệ!", HttpStatus.BAD_REQUEST),
+    ALREADY_PAID(4004, "Giao dịch thanh toán đã hoàn thành trước đó!", HttpStatus.BAD_REQUEST)
     ;
 
     private final int code;

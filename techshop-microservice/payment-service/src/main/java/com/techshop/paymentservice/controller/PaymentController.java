@@ -81,6 +81,18 @@ public class PaymentController {
     }
 
     /**
+     * Regenerate VNPay payment URL for an existing order
+     */
+    @PostMapping("/order/{orderId}/regenerate")
+    public ResponseEntity<PaymentResponse> regeneratePaymentUrl(
+            @PathVariable Long orderId,
+            @RequestParam(required = false) String returnUrl) {
+        log.info("Regenerating VNPay payment URL for order: {}, returnUrl: {}", orderId, returnUrl);
+        PaymentResponse response = paymentService.regeneratePaymentUrl(orderId, returnUrl);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
      * VNPay return callback (GET request from VNPay redirect)
      * This is called when user completes payment on VNPay and is redirected back
      */
@@ -88,32 +100,40 @@ public class PaymentController {
     public ResponseEntity<VNPayResponse> handleVNPayCallback(@RequestParam Map<String, String> params) {
         log.info("VNPay callback received for transaction: {}", params.get("vnp_TxnRef"));
         
+        // Verify signature first
+        if (!vnPayService.verifyPayment(params)) {
+            log.error("Invalid VNPay signature for transaction: {}", params.get("vnp_TxnRef"));
+            return ResponseEntity.ok(VNPayResponse.builder()
+                    .success(false)
+                    .message("Invalid signature")
+                    .build());
+        }
+        
         VNPayResponse response = vnPayService.processCallback(params);
         
-        if (response.isSuccess()) {
-            // Update payment status in database
-            String transactionId = params.get("vnp_TxnRef");
-            String vnpResponseCode = params.get("vnp_ResponseCode");
+        // Update payment status in database (success or failed)
+        String transactionId = params.get("vnp_TxnRef");
+        String vnpResponseCode = params.get("vnp_ResponseCode");
+        
+        try {
+            PaymentResponse payment = paymentService.verifyPayment(transactionId, vnpResponseCode);
+            log.info("Payment verified and updated for transaction: {}, orderId: {}, status: {}", 
+                    transactionId, payment.getOrderId(), payment.getStatus());
             
-            try {
-                PaymentResponse payment = paymentService.verifyPayment(transactionId, vnpResponseCode);
-                log.info("Payment verified and updated for transaction: {}, orderId: {}", transactionId, payment.getOrderId());
-                
-                // Set the actual order ID in the response so frontend can redirect correctly
-                response = VNPayResponse.builder()
-                        .success(response.isSuccess())
-                        .message(response.getMessage())
-                        .transactionNo(response.getTransactionNo())
-                        .orderId(String.valueOf(payment.getOrderId()))
-                        .build();
-                
-            } catch (Exception e) {
-                log.error("Error updating payment status for transaction: {}", transactionId, e);
-                return ResponseEntity.ok(VNPayResponse.builder()
-                        .success(false)
-                        .message("Error verifying payment: " + e.getMessage())
-                        .build());
-            }
+            // Set the actual order ID in the response so frontend can redirect correctly
+            response = VNPayResponse.builder()
+                    .success(response.isSuccess())
+                    .message(response.getMessage())
+                    .transactionNo(response.getTransactionNo())
+                    .orderId(String.valueOf(payment.getOrderId()))
+                    .build();
+            
+        } catch (Exception e) {
+            log.error("Error updating payment status for transaction: {}", transactionId, e);
+            return ResponseEntity.ok(VNPayResponse.builder()
+                    .success(false)
+                    .message("Error verifying payment: " + e.getMessage())
+                    .build());
         }
         
         return ResponseEntity.ok(response);
@@ -127,23 +147,26 @@ public class PaymentController {
     public ResponseEntity<Map<String, String>> vnpayIPN(@RequestParam Map<String, String> params) {
         log.info("VNPay IPN received for transaction: {}", params.get("vnp_TxnRef"));
         
+        // Verify signature first
+        if (!vnPayService.verifyPayment(params)) {
+            log.error("Invalid VNPay signature for IPN transaction: {}", params.get("vnp_TxnRef"));
+            return ResponseEntity.ok(Map.of("RspCode", "97", "Message", "Invalid signature"));
+        }
+        
         VNPayResponse response = vnPayService.processCallback(params);
 
-        if (response.isSuccess()) {
-            // Update payment status in database
-            String transactionId = params.get("vnp_TxnRef");
-            String vnpResponseCode = params.get("vnp_ResponseCode");
-            
-            try {
-                PaymentResponse payment = paymentService.verifyPayment(transactionId, vnpResponseCode);
-                log.info("IPN processed successfully for transaction: {}, orderId: {}", transactionId, payment.getOrderId());
-                return ResponseEntity.ok(Map.of("RspCode", "00", "Message", "Confirm Success"));
-            } catch (Exception e) {
-                log.error("Error processing VNPay IPN", e);
-                return ResponseEntity.ok(Map.of("RspCode", "99", "Message", "Unknown error"));
-            }
-        } else {
-            return ResponseEntity.ok(Map.of("RspCode", "97", "Message", response.getMessage()));
+        // Update payment status in database (success or failed)
+        String transactionId = params.get("vnp_TxnRef");
+        String vnpResponseCode = params.get("vnp_ResponseCode");
+        
+        try {
+            PaymentResponse payment = paymentService.verifyPayment(transactionId, vnpResponseCode);
+            log.info("IPN processed successfully for transaction: {}, orderId: {}, status: {}", 
+                    transactionId, payment.getOrderId(), payment.getStatus());
+            return ResponseEntity.ok(Map.of("RspCode", "00", "Message", "Confirm Success"));
+        } catch (Exception e) {
+            log.error("Error processing VNPay IPN", e);
+            return ResponseEntity.ok(Map.of("RspCode", "99", "Message", "Unknown error"));
         }
     }
 

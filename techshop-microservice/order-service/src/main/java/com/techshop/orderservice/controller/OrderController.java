@@ -7,6 +7,7 @@ import com.techshop.orderservice.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -53,6 +54,11 @@ public class OrderController {
         return ResponseEntity.ok(orderService.cancelOrder(id, authentication.getName()));
     }
 
+    @PostMapping("/{id}/repay")
+    public ResponseEntity<Order> repayOrder(@PathVariable Long id) {
+        return ResponseEntity.ok(orderService.repayOrder(id));
+    }
+
     // =================== INTERNAL ===================
 
     @PutMapping("/{orderId}/payment-status")
@@ -74,8 +80,10 @@ public class OrderController {
     // =================== ADMIN ===================
 
     @GetMapping("/admin/all")
-    public ResponseEntity<Page<Order>> getAll(Pageable pageable) {
-        return ResponseEntity.ok(orderService.getAll(pageable));
+    public ResponseEntity<Page<Order>> getAll(
+            @RequestParam(required = false) List<Order.OrderStatus> status,
+            Pageable pageable) {
+        return ResponseEntity.ok(orderService.getAll(status, pageable));
     }
 
     @PutMapping("/admin/{id}/status")
