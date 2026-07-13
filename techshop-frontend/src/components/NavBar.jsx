@@ -278,33 +278,49 @@ export default function NavBar() {
 
       {/* Sub menu bottom header (Desktop) */}
       <div className="relative z-0 hidden border-b border-gray-200 bg-white lg:block shadow-sm">
-        <div className="max-w-[1200px] mx-auto px-4 flex h-11 items-center justify-between text-xs font-semibold text-gray-700">
-          <div className="flex items-center gap-6 h-full">
-            <NavLink to="/about" className={({ isActive }) => `flex items-center gap-2 hover:text-[#D70018] transition h-full ${isActive ? "text-[#D70018]" : ""}`}>
-              <Tag className="h-4 w-4" />
-              <span>Giới thiệu</span>
-            </NavLink>
-            <NavLink to="/laptop-gaming-hot-deals" className={({ isActive }) => `flex items-center gap-2 hover:text-[#D70018] transition h-full ${isActive ? "text-[#D70018]" : ""}`}>
-              <Flame className="h-4 w-4 text-orange-500" />
-              <span>Hot Deal</span>
-            </NavLink>
-            <NavLink to="/news" className={({ isActive }) => `flex items-center gap-2 hover:text-[#D70018] transition h-full ${isActive ? "text-[#D70018]" : ""}`}>
-              <Newspaper className="h-4 w-4" />
-              <span>Tin tức</span>
-            </NavLink>
-            <NavLink to="/on-site-technical-support" className={({ isActive }) => `flex items-center gap-2 hover:text-[#D70018] transition h-full ${isActive ? "text-[#D70018]" : ""}`}>
-              <Wrench className="h-4 w-4" />
-              <span>Kỹ thuật tại nhà</span>
-            </NavLink>
-            <NavLink to="/trade-in-pricing" className={({ isActive }) => `flex items-center gap-2 hover:text-[#D70018] transition h-full ${isActive ? "text-[#D70018]" : ""}`}>
-              <RefreshCw className="h-4 w-4" />
-              <span>Thu cũ đổi mới</span>
-            </NavLink>
-            <NavLink to="/warranty-lookup" className={({ isActive }) => `flex items-center gap-2 hover:text-[#D70018] transition h-full ${isActive ? "text-[#D70018]" : ""}`}>
-              <Shield className="h-4 w-4" />
-              <span>Tra cứu bảo hành</span>
-            </NavLink>
-          </div>
+        <div className="max-w-[1200px] mx-auto px-4 flex h-11 items-center justify-center gap-4 text-xs font-semibold text-gray-700">
+          <NavLink to="/laptop-gaming-hot-deals" className={({ isActive }) => `flex items-center gap-2 hover:text-[#D70018] transition h-full ${isActive ? "text-[#D70018]" : ""}`}>
+            <Tag className="h-4 w-4" />
+            <span>BUILD PC tặng màn hình 240Hz</span>
+          </NavLink>
+          
+          <span className="text-gray-300 font-normal">|</span>
+          
+          <NavLink to="/trade-in-pricing" className={({ isActive }) => `flex items-center gap-2 hover:text-[#D70018] transition h-full ${isActive ? "text-[#D70018]" : ""}`}>
+            <RefreshCw className="h-4 w-4" />
+            <span>Thu cũ</span>
+          </NavLink>
+          
+          <span className="text-gray-300 font-normal">|</span>
+          
+          <NavLink to="/news" className={({ isActive }) => `flex items-center gap-2 hover:text-[#D70018] transition h-full ${isActive ? "text-[#D70018]" : ""}`}>
+            <Newspaper className="h-4 w-4" />
+            <span>Tin tức</span>
+          </NavLink>
+          
+          <span className="text-gray-300 font-normal">|</span>
+          
+          <NavLink to="/on-site-technical-support" className={({ isActive }) => `flex items-center gap-2 hover:text-[#D70018] transition h-full ${isActive ? "text-[#D70018]" : ""}`}>
+            <Wrench className="h-4 w-4" />
+            <span>Dịch vụ kỹ thuật tại nhà</span>
+          </NavLink>
+          
+          <span className="text-gray-300 font-normal">|</span>
+          
+          <NavLink to="/trade-in-pricing" className={({ isActive }) => `flex items-center gap-2 hover:text-[#D70018] transition h-full ${isActive ? "text-[#D70018]" : ""}`}>
+            <RefreshCw className="h-4 w-4" />
+            <span>Thu cũ đổi mới</span>
+          </NavLink>
+          
+          <span className="text-gray-300 font-normal">|</span>
+          
+          <NavLink to="/warranty-lookup" className={({ isActive }) => `flex items-center gap-2 hover:text-[#D70018] transition h-full ${isActive ? "text-[#D70018]" : ""}`}>
+            <Shield className="h-4 w-4" />
+            <span>Tra cứu bảo hành</span>
+          </NavLink>
+
+          <span className="text-gray-300 font-normal">|</span>
+
           <div className="flex items-center h-full text-[12px] font-bold text-red-600">
             <span>Hotline: <span className="text-[#0A86FF]">1800.6975</span> (Miễn phí)</span>
           </div>
