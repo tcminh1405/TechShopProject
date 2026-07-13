@@ -188,7 +188,7 @@ export default function CategorySidebar({ className = "", onNavigate }) {
 
   return (
     <div
-      className={`relative w-[180px] h-auto shrink-0 ${className} mr-4 hidden lg:block`}
+      className={`relative w-[240px] h-auto shrink-0 ${className} mr-4 hidden lg:block`}
       onMouseEnter={handleWrapperEnter}
       onMouseLeave={handleWrapperLeave}
     >

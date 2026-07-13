@@ -24,11 +24,11 @@ export default function SideFloatBanners() {
         className={`fixed left-3 ${posClass} z-40 hidden xl:block transition-all duration-300 ease-out`}
       >
         <Link to="/products?category=pc" aria-label="PC GVN Banner">
-          <div className="relative h-[380px] w-[100px] overflow-hidden rounded-md shadow-lg hover:shadow-xl transition-shadow">
+          <div className="relative w-[110px] overflow-hidden rounded-md shadow-lg hover:shadow-xl transition-shadow">
             <img
               src="/gearvn-pc-gvn-sticky-t1-26.png"
               alt="PC GVN"
-              className="h-full w-full object-contain object-center"
+              className="w-full h-auto block"
             />
           </div>
         </Link>
@@ -39,11 +39,11 @@ export default function SideFloatBanners() {
         className={`fixed right-3 ${posClass} z-40 hidden xl:block transition-all duration-300 ease-out`}
       >
         <Link to="/products?category=laptop-gaming" aria-label="Laptop Gaming Banner">
-          <div className="relative h-[380px] w-[100px] overflow-hidden rounded-md shadow-lg hover:shadow-xl transition-shadow">
+          <div className="relative w-[110px] overflow-hidden rounded-md shadow-lg hover:shadow-xl transition-shadow">
             <img
               src="/gearvn-laptop-gaming-sticky-t1-26.png"
               alt="Laptop Gaming"
-              className="h-full w-full object-contain object-center"
+              className="w-full h-auto block"
             />
           </div>
         </Link>
