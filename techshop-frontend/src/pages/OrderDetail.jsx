@@ -25,6 +25,26 @@ export default function OrderDetail() {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [cancelling, setCancelling] = useState(false);
+  const [repaying, setRepaying] = useState(false);
+
+  const handleRepay = async () => {
+    setRepaying(true);
+    try {
+      const res = await orderApi.repay(id);
+      if (res.data && res.data.paymentUrl) {
+        toast.info("Đang chuyển hướng đến cổng thanh toán VNPay...");
+        setTimeout(() => {
+          window.location.href = res.data.paymentUrl;
+        }, 1000);
+      } else {
+        toast.error("Không lấy được link thanh toán mới. Vui lòng thử lại!");
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Không thể tạo lại link thanh toán");
+    } finally {
+      setRepaying(false);
+    }
+  };
 
   useEffect(() => {
     if (!user) { nav("/login"); return; }
@@ -180,6 +200,18 @@ export default function OrderDetail() {
                   {order.totalAmount ? Number(order.totalAmount).toLocaleString("vi-VN") : "0"}₫
                 </span>
               </div>
+              
+              {order.paymentMethod === "VNPAY" && order.paymentStatus === "UNPAID" && order.status === "PENDING" && (
+                <div className="pt-4 border-t border-gray-100 mt-2">
+                  <button
+                    onClick={handleRepay}
+                    disabled={repaying}
+                    className="w-full py-2.5 bg-[#E30019] hover:bg-red-700 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 transition active:scale-[0.98]"
+                  >
+                    {repaying ? "Đang xử lý..." : "Thanh toán ngay qua VNPay"}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

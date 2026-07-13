@@ -6,6 +6,7 @@ const orderApi = {
   getById: (id) => axiosClient.get(API_ROUTES.orders.detail(id)),
   create: (data) => axiosClient.post(API_ROUTES.orders.create, data),
   cancel: (id) => axiosClient.put(API_ROUTES.orders.cancel(id)),
+  repay: (id) => axiosClient.post(API_ROUTES.orders.repay(id)),
   getAll: (params) => axiosClient.get(API_ROUTES.orders.all, { params }),
   updateStatus: (id, status) =>
     axiosClient.put(API_ROUTES.orders.updateStatus(id), null, { params: { status } }),

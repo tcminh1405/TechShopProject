@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { CheckCircle, XCircle, Loader, Package, ArrowRight, RotateCcw } from "lucide-react";
 import axiosClient from "../api/axios";
 import CheckoutStepper from "../components/CheckoutStepper";
+import useCartStore from "../store/cartStore";
 
 export default function PaymentResult() {
   const [searchParams] = useSearchParams();
@@ -27,6 +28,14 @@ export default function PaymentResult() {
           setMessage(response.data.message || "Thanh toán thành công!");
           const oid = response.data.orderId;
           setOrderId(oid);
+
+          // Clear cart on successful payment
+          try {
+            useCartStore.getState().clearLocal();
+            useCartStore.getState().clearCart().catch(() => {});
+          } catch (e) {
+            console.error("Lỗi xóa giỏ hàng:", e);
+          }
 
           // Auto-redirect countdown
           let count = 5;
@@ -55,6 +64,23 @@ export default function PaymentResult() {
 
     verifyPayment();
   }, [searchParams, nav]);
+
+  const formatPayDate = (rawDate) => {
+    if (!rawDate || rawDate.length < 14) return "";
+    const year = rawDate.substring(0, 4);
+    const month = rawDate.substring(4, 6);
+    const day = rawDate.substring(6, 8);
+    const hour24 = parseInt(rawDate.substring(8, 10), 10);
+    const minute = rawDate.substring(10, 12);
+    const second = rawDate.substring(12, 14);
+
+    const isPM = hour24 >= 12;
+    const hour12 = hour24 % 12 === 0 ? 12 : hour24 % 12;
+    const ampm = isPM ? "CH" : "SA";
+
+    const formattedHour = String(hour12).padStart(2, '0');
+    return `${day}/${month}/${year} ${formattedHour}:${minute}:${second} ${ampm}`;
+  };
 
   // Step: processing=2, success=3, failed=2
   const stepperStep = status === "success" ? 3 : 2;
@@ -162,6 +188,28 @@ export default function PaymentResult() {
                 <p className="text-gray-500 text-sm leading-relaxed mb-6">
                   {message || "Đã có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại hoặc chọn phương thức thanh toán khác."}
                 </p>
+
+                {/* Details of failed transaction */}
+                {(searchParams.get("vnp_TxnRef") || searchParams.get("vnp_PayDate")) && (
+                  <div className="bg-gray-50 border border-gray-100 rounded-xl p-4 mb-6 text-sm text-gray-600 text-left space-y-2.5">
+                    {searchParams.get("vnp_TxnRef") && (
+                      <div className="flex justify-between items-center pb-2 border-b border-gray-200/50">
+                        <span className="text-gray-400">Mã tra cứu</span>
+                        <span className="font-bold text-gray-800 tracking-wider">
+                          {searchParams.get("vnp_TxnRef")}
+                        </span>
+                      </div>
+                    )}
+                    {searchParams.get("vnp_PayDate") && (
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-400">Thời gian giao dịch</span>
+                        <span className="font-semibold text-gray-700">
+                          {formatPayDate(searchParams.get("vnp_PayDate"))}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Link

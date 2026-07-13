@@ -85,17 +85,20 @@ export default function Checkout() {
       const orderId = order?.id;
       const paymentUrl = order?.paymentUrl;
 
-      toast.success("Đặt hàng thành công!");
-
-      clearLocal();
-      clearCart().catch(() => {});
-
       if (form.paymentMethod === "VNPAY" && paymentUrl) {
-        window.location.href = paymentUrl;
-      } else if (orderId) {
-        nav(`/orders/${orderId}?placed=1`, { replace: true });
+        toast.info("Đang chuyển hướng đến cổng thanh toán VNPay...");
+        setTimeout(() => {
+          window.location.href = paymentUrl;
+        }, 1000);
       } else {
-        nav("/orders", { replace: true });
+        toast.success("Đặt hàng thành công!");
+        clearLocal();
+        clearCart().catch(() => {});
+        if (orderId) {
+          nav(`/orders/${orderId}?placed=1`, { replace: true });
+        } else {
+          nav("/orders", { replace: true });
+        }
       }
     } catch (err) {
       console.error("Order creation failed:", err);

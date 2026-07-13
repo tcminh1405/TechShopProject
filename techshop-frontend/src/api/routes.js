@@ -51,6 +51,7 @@ export const API_ROUTES = {
         detail: (id) => `/api/orders/${id}`,
         create: "/api/orders",
         cancel: (id) => `/api/orders/${id}/cancel`,
+        repay: (id) => `/api/orders/${id}/repay`,
         all: "/api/orders/admin/all",
         updateStatus: (id) => `/api/orders/admin/${id}/status`,
     },

@@ -17,20 +17,51 @@ const STATUS_LABEL = {
   SHIPPED: "Đang giao", DELIVERED: "Đã giao", CANCELLED: "Đã hủy",
 };
 
+const TABS = [
+  { id: "ALL", label: "TẤT CẢ", statuses: null },
+  { id: "PENDING", label: "MỚI", statuses: ["PENDING"] },
+  { id: "PROCESSING", label: "ĐANG XỬ LÝ", statuses: ["CONFIRMED", "PROCESSING"] },
+  { id: "SHIPPED", label: "ĐANG VẬN CHUYỂN", statuses: ["SHIPPED"] },
+  { id: "DELIVERED", label: "HOÀN THÀNH", statuses: ["DELIVERED"] },
+  { id: "CANCELLED", label: "HUỶ", statuses: ["CANCELLED"] },
+];
+
 export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [activeTab, setActiveTab] = useState("ALL");
 
   const load = () => {
     setLoading(true);
-    orderApi.getAll({ page, size: 15 })
-      .then((r) => { setOrders(r.data?.content || []); setTotalPages(r.data?.totalPages || 0); })
-      .catch(() => {}).finally(() => setLoading(false));
+    const tab = TABS.find((t) => t.id === activeTab);
+    const params = {
+      page,
+      size: 15,
+      sort: "createdAt,desc"
+    };
+    if (tab && tab.statuses) {
+      params.status = tab.statuses.join(",");
+    }
+
+    orderApi.getAll(params)
+      .then((r) => { 
+        setOrders(r.data?.content || []); 
+        setTotalPages(r.data?.totalPages || 0); 
+      })
+      .catch(() => { })
+      .finally(() => setLoading(false));
   };
 
-  useEffect(() => { load(); }, [page]);
+  useEffect(() => { 
+    load(); 
+  }, [page, activeTab]);
+
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    setPage(0);
+  };
 
   const handleStatusChange = async (id, status) => {
     try {
@@ -40,9 +71,42 @@ export default function AdminOrders() {
     } catch { toast.error("Cập nhật thất bại"); }
   };
 
+  const handleMarkAsPaid = async (id) => {
+    if (!confirm("Xác nhận đơn hàng này đã được chuyển khoản thành công?")) return;
+    try {
+      await orderApi.markAsPaid(id);
+      toast.success("Đã xác nhận thanh toán thành công");
+      load();
+    } catch {
+      toast.error("Không thể xác nhận thanh toán");
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">Quản lý đơn hàng</h1>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-2xl font-bold text-gray-900">Quản lý đơn hàng</h1>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex border-b border-gray-200 gap-6 overflow-x-auto scrollbar-none pb-px">
+        {TABS.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => handleTabChange(tab.id)}
+              className={`py-3 px-1 font-semibold text-sm border-b-2 transition whitespace-nowrap -mb-px ${
+                isActive
+                  ? "border-orange-500 text-orange-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
 
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
@@ -72,6 +136,11 @@ export default function AdminOrders() {
                     <span className={`px-2 py-1 rounded-full text-xs font-semibold ${o.paymentStatus === "PAID" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>
                       {o.paymentStatus === "PAID" ? "Đã TT" : "Chưa TT"}
                     </span>
+                    <p className="text-[11px] text-gray-400 mt-1 font-medium">
+                      {o.paymentMethod === "COD" ? "COD (Tiền mặt)" :
+                        o.paymentMethod === "VNPAY" ? "VNPay" :
+                          o.paymentMethod === "BANK_TRANSFER" ? "Chuyển khoản" : o.paymentMethod}
+                    </p>
                   </td>
                   <td className="px-5 py-4">
                     <div className="relative">
