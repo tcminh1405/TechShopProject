@@ -41,7 +41,9 @@ function getSpecsForCard(product) {
     cpu = cpu.replace(/intel\s+core\s+/i, "")
              .replace(/amd\s+ryzen\s+/i, "")
              .replace(/intel\s+/i, "")
-             .replace(/amd\s+/i, "");
+             .replace(/amd\s+/i, "")
+             .replace(/processor/i, "")
+             .trim();
   }
 
   // RAM
@@ -62,7 +64,12 @@ function getSpecsForCard(product) {
   let vga = getVal(["vga", "card đồ họa", "card màn hình", "gpu"]);
   if (vga) {
     vga = vga.replace(/nvidia\s+/i, "")
-             .replace(/amd\s+/i, "");
+             .replace(/amd\s+/i, "")
+             .replace(/geforce\s+/i, "")
+             .replace(/graphics\s+/i, "")
+             .replace(/\s+GB/i, "G")
+             .replace(/\s+gb/i, "G")
+             .trim();
   }
 
   if (isLaptop) {
@@ -189,63 +196,63 @@ export default function ProductCard({ product }) {
           </span>
         )}
         
-        <h3 className="text-[13px] font-bold text-gray-800 line-clamp-2 leading-tight group-hover:text-red-600 transition-colors h-10">
+        <h3 className="text-[13px] font-bold text-gray-800 line-clamp-2 leading-tight group-hover:text-red-600 transition-colors h-10 overflow-hidden">
           {product.name}
         </h3>
 
         {/* Specifications Box */}
         {specs && specs.type === "laptop" && (
-          <div className="bg-gray-100 rounded-lg p-2 my-1.5 text-[11px] text-gray-500 font-semibold grid grid-cols-2 gap-x-2 gap-y-1">
+          <div className="bg-gray-50 border border-gray-200/60 rounded-lg p-1.5 my-1 text-[10px] text-gray-500 font-semibold grid grid-cols-2 gap-x-1.5 gap-y-1">
             <div className="flex items-center gap-1 min-w-0">
-              <Cpu className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+              <Cpu className="h-3 w-3 text-gray-400 shrink-0" />
               <span className="truncate">{specs.cpu}</span>
             </div>
             <div className="flex items-center gap-1 min-w-0">
-              <Layers className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+              <Layers className="h-3 w-3 text-gray-400 shrink-0" />
               <span className="truncate">{specs.vga}</span>
             </div>
             <div className="flex items-center gap-1 min-w-0">
-              <Database className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+              <Database className="h-3 w-3 text-gray-400 shrink-0" />
               <span className="truncate">{specs.ram}</span>
             </div>
             <div className="flex items-center gap-1 min-w-0">
-              <HardDrive className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+              <HardDrive className="h-3 w-3 text-gray-400 shrink-0" />
               <span className="truncate">{specs.ssd}</span>
             </div>
             <div className="flex items-center gap-1 min-w-0">
-              <Monitor className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+              <Monitor className="h-3 w-3 text-gray-400 shrink-0" />
               <span className="truncate">{specs.screen}</span>
             </div>
             <div className="flex items-center gap-1 min-w-0">
-              <RefreshCw className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+              <RefreshCw className="h-3 w-3 text-gray-400 shrink-0" />
               <span className="truncate">{specs.hz}</span>
             </div>
           </div>
         )}
 
         {specs && specs.type === "pc" && (
-          <div className="bg-gray-100 rounded-lg p-2 my-1.5 text-[11px] text-gray-500 font-semibold space-y-1">
-            <div className="grid grid-cols-2 gap-x-2 gap-y-1">
+          <div className="bg-gray-50 border border-gray-200/60 rounded-lg p-1.5 my-1 text-[10px] text-gray-500 font-semibold space-y-1">
+            <div className="grid grid-cols-2 gap-x-1.5 gap-y-1">
               <div className="flex items-center gap-1 min-w-0">
-                <Cpu className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+                <Cpu className="h-3 w-3 text-gray-400 shrink-0" />
                 <span className="truncate">{specs.cpu}</span>
               </div>
               <div className="flex items-center gap-1 min-w-0">
-                <Layers className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+                <Layers className="h-3 w-3 text-gray-400 shrink-0" />
                 <span className="truncate">{specs.vga}</span>
               </div>
             </div>
-            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 pt-0.5">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 pt-0.5">
               <div className="flex items-center gap-1 min-w-0">
-                <Grid className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+                <Grid className="h-3 w-3 text-gray-400 shrink-0" />
                 <span className="truncate">{specs.main}</span>
               </div>
               <div className="flex items-center gap-1 min-w-0">
-                <Database className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+                <Database className="h-3 w-3 text-gray-400 shrink-0" />
                 <span className="truncate">{specs.ram}</span>
               </div>
               <div className="flex items-center gap-1 min-w-0">
-                <HardDrive className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+                <HardDrive className="h-3 w-3 text-gray-400 shrink-0" />
                 <span className="truncate">{specs.ssd}</span>
               </div>
             </div>
