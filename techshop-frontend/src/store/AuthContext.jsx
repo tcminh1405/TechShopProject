@@ -1,10 +1,22 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("email");
+    localStorage.removeItem("fullName");
+    localStorage.removeItem("phone");
+    localStorage.removeItem("address");
+    localStorage.removeItem("userId");
+    setUser(null);
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -16,8 +28,19 @@ export const AuthProvider = ({ children }) => {
     const id = localStorage.getItem("userId");
 
     if (token && role) {
-      // Khôi phục user từ localStorage, không cần gọi API
-      setUser({ token, role, email, fullName, phone, address, id: id ? Number(id) : null });
+      try {
+        const decoded = jwtDecode(token);
+        const currentTime = Date.now() / 1000;
+        if (decoded.exp < currentTime) {
+          logout();
+        } else {
+          // Khôi phục user từ localStorage, không cần gọi API
+          setUser({ token, role, email, fullName, phone, address, id: id ? Number(id) : null });
+        }
+      } catch (err) {
+        // Token không đúng định dạng -> Đăng xuất
+        logout();
+      }
     }
     setLoading(false);
   }, []);
@@ -34,17 +57,6 @@ export const AuthProvider = ({ children }) => {
     if (userData?.id) localStorage.setItem("userId", String(userData.id));
     // Set vào state
     setUser({ token, ...userData });
-  };
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    localStorage.removeItem("email");
-    localStorage.removeItem("fullName");
-    localStorage.removeItem("phone");
-    localStorage.removeItem("address");
-    localStorage.removeItem("userId");
-    setUser(null);
   };
 
   const isAuthenticated = !!user?.token;

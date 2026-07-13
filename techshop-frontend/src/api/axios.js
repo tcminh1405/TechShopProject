@@ -68,6 +68,23 @@ axiosClient.interceptors.response.use(
       });
     }
 
+    // Handle unauthorized/forbidden errors (e.g. token expired)
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      const token = localStorage.getItem("token");
+      if (token) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        localStorage.removeItem("email");
+        localStorage.removeItem("fullName");
+        localStorage.removeItem("phone");
+        localStorage.removeItem("address");
+        localStorage.removeItem("userId");
+        
+        // Redirect to login with expired flag
+        window.location.href = "/login?expired=true";
+      }
+    }
+
     // Không auto-redirect, để từng trang tự xử lý lỗi 401
     return Promise.reject(error);
   }
