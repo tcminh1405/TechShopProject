@@ -80,11 +80,11 @@ export default function OtpInput({ value = "", onChange, disabled = false, error
   };
 
   const ringClass = error
-    ? "border-[#E30019] ring-2 ring-[#E30019]/30"
-    : "border-gray-200 focus:border-[#E30019] focus:ring-2 focus:ring-[#E30019]/25";
+    ? "border-[#E30019] ring-4 ring-[#E30019]/20 bg-red-50/30"
+    : "border-gray-200 hover:border-gray-300 focus:border-[#E30019] focus:ring-4 focus:ring-[#E30019]/15 focus:scale-105 focus:shadow-sm";
 
   return (
-    <div className="flex items-center justify-between gap-2 sm:gap-3">
+    <div className="flex items-center justify-center gap-2 sm:gap-3.5">
       {digits.map((d, idx) => (
         <input
           key={idx}
@@ -100,12 +100,13 @@ export default function OtpInput({ value = "", onChange, disabled = false, error
           onPaste={handlePaste}
           onFocus={(e) => e.target.select()}
           className={`
-            w-full aspect-square max-w-[52px] rounded-xl border-2 bg-white
-            text-center text-xl font-extrabold text-gray-900
-            outline-none transition
+            w-full aspect-square max-w-[50px] sm:max-w-[56px] rounded-2xl border-2 bg-gray-50/50
+            text-center text-2xl font-black text-gray-900
+            outline-none transition-all duration-200
             disabled:opacity-40 disabled:cursor-not-allowed
+            shadow-inner
             ${ringClass}
-            ${d ? "bg-red-50 border-[#E30019]" : ""}
+            ${d && !error ? "bg-white border-[#E30019] text-[#E30019] shadow-sm" : ""}
           `}
           aria-label={`Chữ số OTP thứ ${idx + 1}`}
         />
