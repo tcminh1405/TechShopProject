@@ -229,48 +229,48 @@ export default function NavBar() {
               <div className="absolute right-0 top-full h-3 w-full" />
 
               <div className="absolute right-0 top-[calc(100%+0.5rem)] w-64 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50 text-gray-800 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-150 pointer-events-none group-hover:pointer-events-auto">
-                  <div className="px-4 py-3 bg-gradient-to-r from-red-50 to-red-100 border-b border-gray-100">
-                    <p className="text-xs text-gray-500">Xin chào</p>
-                    <p className="font-bold text-gray-900 truncate">{displayName}</p>
-                    {user ? (
-                      <span className="text-[10px] bg-red-600 text-white font-bold px-1.5 py-0.5 rounded uppercase">{user.role}</span>
-                    ) : (
-                      <p className="text-xs text-gray-400">Vui lòng đăng nhập tài khoản để xem ưu đãi và thanh toán dễ dàng hơn.</p>
-                    )}
-                  </div>
-
+                <div className="px-4 py-3 bg-gradient-to-r from-red-50 to-red-100 border-b border-gray-100">
+                  <p className="text-xs text-gray-500">Xin chào</p>
+                  <p className="font-bold text-gray-900 truncate">{displayName}</p>
                   {user ? (
-                    <>
-                      <div className="py-1">
-                        <Link to="/profile" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
-                          <User className="h-4 w-4" /> Hồ sơ cá nhân
-                        </Link>
-                        <Link to="/orders" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
-                          <Package className="h-4 w-4" /> Đơn hàng của tôi
-                        </Link>
-                        {(user.role === "ADMIN" || user.role === "STAFF") && (
-                          <Link to="/admin" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition font-medium">
-                            <Settings className="h-4 w-4 text-red-600" /> Quản lý hệ thống
-                          </Link>
-                        )}
-                      </div>
-                      <div className="border-t border-gray-100">
-                        <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-red-600 hover:bg-red-50 transition">
-                          <LogOut className="h-4 w-4" /> Đăng xuất
-                        </button>
-                      </div>
-                    </>
+                    <span className="text-[10px] bg-red-600 text-white font-bold px-1.5 py-0.5 rounded uppercase">{user.role}</span>
                   ) : (
-                    <div className="p-4 grid grid-cols-2 gap-2">
-                      <Link to="/login" className="flex h-9 items-center justify-center rounded bg-red-600 text-xs font-bold text-white transition hover:bg-red-700">
-                        ĐĂNG NHẬP
-                      </Link>
-                      <Link to="/register" className="flex h-9 items-center justify-center rounded border border-gray-300 text-xs font-bold text-gray-700 transition hover:bg-gray-50">
-                        ĐĂNG KÝ
-                      </Link>
-                    </div>
+                    <p className="text-xs text-gray-400">Vui lòng đăng nhập tài khoản để xem ưu đãi và thanh toán dễ dàng hơn.</p>
                   )}
                 </div>
+
+                {user ? (
+                  <>
+                    <div className="py-1">
+                      <Link to="/profile" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
+                        <User className="h-4 w-4" /> Hồ sơ cá nhân
+                      </Link>
+                      <Link to="/orders" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
+                        <Package className="h-4 w-4" /> Đơn hàng của tôi
+                      </Link>
+                      {(user.role === "ADMIN" || user.role === "STAFF") && (
+                        <Link to="/admin" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition font-medium">
+                          <Settings className="h-4 w-4 text-red-600" /> Quản lý hệ thống
+                        </Link>
+                      )}
+                    </div>
+                    <div className="border-t border-gray-100">
+                      <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-red-600 hover:bg-red-50 transition">
+                        <LogOut className="h-4 w-4" /> Đăng xuất
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="p-4 grid grid-cols-2 gap-2">
+                    <Link to="/login" className="flex h-9 items-center justify-center rounded bg-red-600 text-xs font-bold text-white transition hover:bg-red-700">
+                      ĐĂNG NHẬP
+                    </Link>
+                    <Link to="/register" className="flex h-9 items-center justify-center rounded border border-gray-300 text-xs font-bold text-gray-700 transition hover:bg-gray-50">
+                      ĐĂNG KÝ
+                    </Link>
+                  </div>
+                )}
+              </div>
             </div>
           </div>{/* end desktop Action Links right */}
         </div>{/* end desktop flex row */}
@@ -280,40 +280,40 @@ export default function NavBar() {
       <div className="relative z-0 hidden border-b border-gray-200 bg-white lg:block shadow-sm">
         <div className="max-w-[1200px] mx-auto px-4 flex h-11 items-center justify-center gap-4 text-xs font-semibold text-gray-700">
           <NavLink to="/laptop-gaming-hot-deals" className={({ isActive }) => `flex items-center gap-2 hover:text-[#D70018] transition h-full ${isActive ? "text-[#D70018]" : ""}`}>
-            <Tag className="h-4 w-4" />
-            <span>BUILD PC tặng màn hình 240Hz</span>
+            <Flame className="h-4 w-4" />
+            <span>Hot deal</span>
           </NavLink>
-          
+
           <span className="text-gray-300 font-normal">|</span>
-          
+
           <NavLink to="/trade-in-pricing" className={({ isActive }) => `flex items-center gap-2 hover:text-[#D70018] transition h-full ${isActive ? "text-[#D70018]" : ""}`}>
             <RefreshCw className="h-4 w-4" />
             <span>Thu cũ</span>
           </NavLink>
-          
+
           <span className="text-gray-300 font-normal">|</span>
-          
+
           <NavLink to="/news" className={({ isActive }) => `flex items-center gap-2 hover:text-[#D70018] transition h-full ${isActive ? "text-[#D70018]" : ""}`}>
             <Newspaper className="h-4 w-4" />
             <span>Tin tức</span>
           </NavLink>
-          
+
           <span className="text-gray-300 font-normal">|</span>
-          
+
           <NavLink to="/on-site-technical-support" className={({ isActive }) => `flex items-center gap-2 hover:text-[#D70018] transition h-full ${isActive ? "text-[#D70018]" : ""}`}>
             <Wrench className="h-4 w-4" />
             <span>Dịch vụ kỹ thuật tại nhà</span>
           </NavLink>
-          
+
           <span className="text-gray-300 font-normal">|</span>
-          
+
           <NavLink to="/trade-in-pricing" className={({ isActive }) => `flex items-center gap-2 hover:text-[#D70018] transition h-full ${isActive ? "text-[#D70018]" : ""}`}>
             <RefreshCw className="h-4 w-4" />
             <span>Thu cũ đổi mới</span>
           </NavLink>
-          
+
           <span className="text-gray-300 font-normal">|</span>
-          
+
           <NavLink to="/warranty-lookup" className={({ isActive }) => `flex items-center gap-2 hover:text-[#D70018] transition h-full ${isActive ? "text-[#D70018]" : ""}`}>
             <Shield className="h-4 w-4" />
             <span>Tra cứu bảo hành</span>

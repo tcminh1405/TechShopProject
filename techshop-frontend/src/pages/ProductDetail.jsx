@@ -27,7 +27,13 @@ function parseImages(product) {
           if (url && !list.includes(url)) list.push(url);
         });
       }
-    } catch (_) {}
+    } catch (_) {
+      const splitUrls = product.images.split(",");
+      splitUrls.forEach((url) => {
+        const trimmed = url.trim();
+        if (trimmed && !list.includes(trimmed)) list.push(trimmed);
+      });
+    }
   } else if (Array.isArray(product.images)) {
     product.images.forEach((url) => {
       if (url && !list.includes(url)) list.push(url);
@@ -424,7 +430,7 @@ export default function ProductDetail() {
         {recommendations && recommendations.length > 0 && (
           <div className="mt-4 bg-white rounded-xl border border-gray-100 shadow-sm p-5">
             <h2 className="text-base font-extrabold text-gray-900 mb-4 flex items-center gap-2">
-              <span className="text-xl">🤖</span> Gợi ý sản phẩm phù hợp
+              <span className="text-xl">🤖</span> Gợi ý sản phẩm tương tự
               <span className="ml-auto text-xs bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full font-semibold">
                 AI - {recAlgo}
               </span>

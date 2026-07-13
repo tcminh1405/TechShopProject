@@ -8,20 +8,20 @@ import { MENU_DATA } from "../data/megamenu";
 import { CATEGORY_MENU } from "../data/categoryMenu";
 
 export const sidebarItems = [
-  { id: "laptop",         label: "Laptop",                icon: "Laptop" },
-  { id: "laptop-gaming",  label: "Laptop Gaming",          icon: "Laptop" },
-  { id: "pc",             label: "PC GVN",                 icon: "PcCase" },
-  { id: "main-cpu-vga",   label: "Main, CPU, VGA",         icon: "Cpu" },
-  { id: "case-nguon-tan", label: "Case, Nguồn, Tản",       icon: "PcCase" },
-  { id: "storage-ram",    label: "Ổ cứng, RAM, Thẻ nhớ",  icon: "HardDrive" },
-  { id: "audio-webcam",   label: "Loa, Micro, Webcam",     icon: "Mic" },
-  { id: "monitor",        label: "Màn hình",               icon: "Monitor" },
-  { id: "keyboard",       label: "Bàn phím",               icon: "Keyboard" },
-  { id: "mouse",          label: "Chuột + Lót chuột",      icon: "Mouse" },
-  { id: "headphone",      label: "Tai nghe",               icon: "Headphones" },
-  { id: "chair",          label: "Ghế - Bàn",              icon: "Armchair" },
-  { id: "console",        label: "Handheld Console",       icon: "Gamepad2" },
-  { id: "accessory",      label: "Phụ kiện",               icon: "Usb" },
+  { id: "laptop", label: "Laptop", icon: "Laptop" },
+  { id: "laptop-gaming", label: "Laptop Gaming", icon: "Laptop" },
+  { id: "pc", label: "PC GVN", icon: "PcCase" },
+  { id: "main-cpu-vga", label: "Main, CPU, VGA", icon: "Cpu" },
+  { id: "case-nguon-tan", label: "Case, Nguồn, Tản", icon: "PcCase" },
+  { id: "storage-ram", label: "Ổ cứng, RAM, Thẻ nhớ", icon: "HardDrive" },
+  { id: "audio-webcam", label: "Loa, Micro, Webcam", icon: "Mic" },
+  { id: "monitor", label: "Màn hình", icon: "Monitor" },
+  { id: "keyboard", label: "Bàn phím", icon: "Keyboard" },
+  { id: "mouse", label: "Chuột + Lót chuột", icon: "Mouse" },
+  { id: "headphone", label: "Tai nghe", icon: "Headphones" },
+  { id: "chair", label: "Ghế - Bàn", icon: "Armchair" },
+  { id: "console", label: "Handheld Console", icon: "Gamepad2" },
+  { id: "accessory", label: "Phụ kiện", icon: "Usb" },
   { id: "dich-vu-thong-tin", label: "Dịch vụ và thông tin", icon: "Wrench" },
 ];
 
@@ -188,7 +188,7 @@ export default function CategorySidebar({ className = "", onNavigate }) {
 
   return (
     <div
-      className={`relative w-[240px] h-auto shrink-0 ${className} mr-4 hidden lg:block`}
+      className={`relative w-[200px] h-auto shrink-0 ${className} mr-4 hidden lg:block`}
       onMouseEnter={handleWrapperEnter}
       onMouseLeave={handleWrapperLeave}
     >

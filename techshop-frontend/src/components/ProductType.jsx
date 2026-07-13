@@ -6,10 +6,11 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const CATEGORIES = [
   {
-    title: "Laptop Học tập & Văn phòng",
+    title: "Laptop Học Tập & Văn Phòng",
     categorySlug: "laptop",
     href: "/products?category=laptop",
     video: ["/product/laptop_dell.mp4"],
+    brands: ["ASUS", "HP", "Lenovo", "Dell", "Acer", "LG"]
   },
   {
     title: "Laptop Gaming Hiệu Năng Cao",
@@ -20,6 +21,7 @@ const CATEGORIES = [
       "/product/laptopgaming_asus.mp4",
       "/product/laptopgaming_dell.mp4",
     ],
+    brands: ["ASUS", "Acer", "Lenovo", "MSI", "HP"]
   },
   {
     title: "PC GVN Lắp Ráp & Đồng Bộ",
@@ -31,6 +33,7 @@ const CATEGORIES = [
       "/product/PC_2.mp4",
       "/product/PC_4.mp4",
     ],
+    brands: ["TechShop"]
   },
   {
     title: "Bàn Phím Cơ & Văn Phòng",
@@ -43,6 +46,7 @@ const CATEGORIES = [
       "/product/keyboard_3.mp4",
       "/product/keyboard_4.mp4",
     ],
+    brands: ["AKKO", "Aula", "Keychron", "Corsair", "Logitech", "Razer", "Leobog"]
   },
   {
     title: "Màn Hình Hiển Thị Chính Hãng",
@@ -52,6 +56,7 @@ const CATEGORIES = [
       "/product/monitor.mp4",
       "/product/monitor_1.mp4",
     ],
+    brands: ["ASUS", "Dell", "LG", "Samsung", "ViewSonic", "AOC", "Gigabyte"]
   },
 ];
 
@@ -123,14 +128,33 @@ function CategoryRow({ item }) {
 
       {/* Product Carousel */}
       <div className="p-4">
-        <div className="flex justify-between items-center border-b border-gray-100 pb-3 mb-2">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-3 mb-2">
           <h2 className="text-base font-extrabold text-gray-900 flex items-center gap-2">
             <span className="w-1.5 h-5 bg-[#E30019] rounded-full inline-block" />
             {item.title}
           </h2>
-          <Link to={item.href} className="text-[#E30019] hover:underline text-xs font-semibold">
-            Xem tất cả →
-          </Link>
+
+          {/* Brand Links Row */}
+          {item.brands && item.brands.length > 0 && (
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs font-semibold text-gray-700">
+              {item.brands.map((brand) => (
+                <Link
+                  key={brand}
+                  to={`/products?category=${item.categorySlug}&brand=${brand}`}
+                  className="hover:text-[#E30019] hover:underline decoration-[1.5px] underline-offset-4 transition-colors"
+                >
+                  {brand}
+                </Link>
+              ))}
+
+              <Link
+                to={item.href}
+                className="text-blue-600 hover:text-[#E30019] hover:underline decoration-[1.5px] underline-offset-4 transition-colors"
+              >
+                Xem tất cả
+              </Link>
+            </div>
+          )}
         </div>
 
         {loading ? (

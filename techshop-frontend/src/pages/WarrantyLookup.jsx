@@ -22,7 +22,7 @@ export default function WarrantyLookup() {
   return (
     <div className="bg-[#F2F2F2] min-h-screen py-6 px-4 text-gray-800">
       <div className="max-w-[1200px] mx-auto">
-        
+
         {/* Breadcrumb */}
         <div className="text-xs text-gray-500 mb-4 flex items-center gap-1">
           <Link to="/" className="text-blue-600 hover:underline">Trang chủ</Link>
@@ -40,21 +40,19 @@ export default function WarrantyLookup() {
           <div className="flex border-b mb-6 gap-2">
             <button
               onClick={() => setActiveTab("warranty")}
-              className={`px-6 py-3 font-bold text-sm uppercase rounded-t-lg transition ${
-                activeTab === "warranty"
-                  ? "bg-[#E30019] text-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
+              className={`px-6 py-3 font-bold text-sm uppercase rounded-t-lg transition ${activeTab === "warranty"
+                ? "bg-[#E30019] text-white"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
             >
               Tra cứu phiếu bảo hành
             </button>
             <button
               onClick={() => setActiveTab("imei")}
-              className={`px-6 py-3 font-bold text-sm uppercase rounded-t-lg transition ${
-                activeTab === "imei"
-                  ? "bg-[#E30019] text-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
+              className={`px-6 py-3 font-bold text-sm uppercase rounded-t-lg transition ${activeTab === "imei"
+                ? "bg-[#E30019] text-white"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
             >
               Tra cứu IMEI
             </button>
@@ -82,7 +80,7 @@ export default function WarrantyLookup() {
                   className="flex-1 px-4 py-3 text-sm border border-gray-300 rounded focus:border-[#E30019] outline-none bg-white"
                 />
                 <button
-                  onClick={handleWarrantyLookup}
+                  // onClick={handleWarrantyLookup}
                   className="px-8 py-3 bg-[#E30019] hover:bg-red-700 text-white font-bold text-sm rounded transition"
                 >
                   TRA CỨU NGAY
@@ -103,7 +101,7 @@ export default function WarrantyLookup() {
                   className="flex-1 px-4 py-3 text-sm border border-gray-300 rounded focus:border-[#E30019] outline-none bg-white"
                 />
                 <button
-                  onClick={handleImeiLookup}
+                  // onClick={handleImeiLookup}
                   className="px-8 py-3 bg-[#E30019] hover:bg-red-700 text-white font-bold text-sm rounded transition"
                 >
                   TRA CỨU NGAY
