@@ -101,7 +101,7 @@ export default function AdminLayout() {
           </div>
           
           <div className="flex items-center gap-4">
-            <NotificationBell />
+            <NotificationBell dark={false} />
             <div className="h-6 w-[1px] bg-gray-200 hidden md:block"></div>
             <div className="hidden md:flex items-center gap-2">
                <span className="text-sm font-medium text-gray-700">{user?.fullName}</span>

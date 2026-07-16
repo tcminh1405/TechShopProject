@@ -190,9 +190,11 @@ export default function NavBar() {
             </Link>
 
             {/* Notifications */}
-            <div className="flex items-center justify-center p-2 rounded-[6px] hover:bg-white/10 transition">
-              <NotificationBell />
-            </div>
+            {user && (
+              <div className="flex items-center justify-center p-2 rounded-[6px] hover:bg-white/10 transition">
+                <NotificationBell />
+              </div>
+            )}
 
             {/* Cart */}
             <Link to="/cart" className="flex items-center gap-2 px-2 py-1.5 rounded-[6px] hover:bg-white/10 transition">
