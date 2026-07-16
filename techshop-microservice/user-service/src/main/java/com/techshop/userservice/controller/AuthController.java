@@ -32,6 +32,17 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(request));
     }
 
+    // =================== SOCIAL LOGIN ===================
+    @PostMapping("/facebook")
+    public ResponseEntity<AuthResponse> loginFacebook(@Valid @RequestBody SocialLoginRequest request) {
+        return ResponseEntity.ok(authService.loginFacebook(request));
+    }
+
+    @PostMapping("/google")
+    public ResponseEntity<AuthResponse> loginGoogle(@Valid @RequestBody SocialLoginRequest request) {
+        return ResponseEntity.ok(authService.loginGoogle(request));
+    }
+
     // =================== OTP: GỬI MÃ ===================
     /**
      * Bước 1: Validate thông tin → tạo OTP → gửi email.

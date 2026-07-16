@@ -29,6 +29,8 @@ public class User {
     private String phone;
     private String address;
     private String avatarUrl;
+    private String facebookId;
+    private String googleId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

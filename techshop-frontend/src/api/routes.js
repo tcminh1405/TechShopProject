@@ -7,6 +7,8 @@ export const API_ROUTES = {
         otpVerify: "/api/auth/otp/verify",
         forgotPassword: "/api/auth/otp/forgot-password",
         resetPassword: "/api/auth/otp/reset-password",
+        facebook: "/api/auth/facebook",
+        google: "/api/auth/google",
     },
     users: {
         me: "/api/users/me",

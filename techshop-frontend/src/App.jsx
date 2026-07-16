@@ -28,6 +28,7 @@ import Register from "@/pages/Register.jsx";
 import TermsOfService from "@/pages/TermsOfService.jsx";
 import PrivacyPolicy from "@/pages/PrivacyPolicy.jsx";
 import ForgotPassword from "@/pages/ForgotPassword.jsx";
+import OAuth2Callback from "@/pages/OAuth2Callback.jsx";
 
 // User pages
 import Cart from "@/pages/Cart.jsx";
@@ -58,6 +59,7 @@ export default function App() {
 
   const hideLayout =
     ["/login", "/register", "/forgot-password"].includes(location.pathname) ||
+    location.pathname.startsWith("/oauth2/callback") ||
     location.pathname.startsWith("/admin");
 
   return (
@@ -93,6 +95,7 @@ export default function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/oauth2/callback/:provider" element={<OAuth2Callback />} />
 
           {/* ===== USER ===== */}
           <Route path="/cart" element={<Cart />} />

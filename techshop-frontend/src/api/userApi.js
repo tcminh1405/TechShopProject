@@ -13,6 +13,7 @@ const userApi = {
     otpVerify: (data) => axiosClient.post(API_ROUTES.auth.otpVerify, data),
     forgotPassword: (data) => axiosClient.post(API_ROUTES.auth.forgotPassword, data),
     resetPassword: (data) => axiosClient.post(API_ROUTES.auth.resetPassword, data),
+    socialLogin: (provider, code) => axiosClient.post(API_ROUTES.auth[provider], { code }),
 
     getMe: () => axiosClient.get(API_ROUTES.users.me),
     getAll: () => axiosClient.get(API_ROUTES.users.all),

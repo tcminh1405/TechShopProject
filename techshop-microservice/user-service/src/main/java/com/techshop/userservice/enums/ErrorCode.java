@@ -11,7 +11,8 @@ public enum ErrorCode {
     ACCOUNT_LOCKED(1005, "Tài khoản đã bị khóa!", HttpStatus.FORBIDDEN),
     USER_NOT_FOUND(1006, "Người dùng không tồn tại!", HttpStatus.NOT_FOUND),
     TOKEN_INVALID(1007, "Token không hợp lệ hoặc đã hết hạn!", HttpStatus.UNAUTHORIZED),
-    MISSING_TOKEN(1008, "Thiếu token xác thực!", HttpStatus.UNAUTHORIZED)
+    MISSING_TOKEN(1008, "Thiếu token xác thực!", HttpStatus.UNAUTHORIZED),
+    OAUTH_AUTHENTICATION_FAILED(1009, "Xác thực tài khoản mạng xã hội thất bại!", HttpStatus.BAD_REQUEST)
     ;
 
     private final int code;

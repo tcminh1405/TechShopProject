@@ -189,6 +189,12 @@ services:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
       - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
       - JWT_SECRET=${JWT_SECRET:-techshop-super-secret-key-change-in-production-2024}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-google-mock-client-id}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET:-google-mock-client-secret}
+      - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI:-http://localhost:5173/oauth2/callback/google}
+      - FACEBOOK_CLIENT_ID=${FACEBOOK_CLIENT_ID:-facebook-mock-client-id}
+      - FACEBOOK_CLIENT_SECRET=${FACEBOOK_CLIENT_SECRET:-facebook-mock-client-secret}
+      - FACEBOOK_REDIRECT_URI=${FACEBOOK_REDIRECT_URI:-http://localhost:5173/oauth2/callback/facebook}
     depends_on:
       mysql-user:
         condition: service_healthy

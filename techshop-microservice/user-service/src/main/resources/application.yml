@@ -61,6 +61,16 @@ jwt:
   secret: ${JWT_SECRET:techshop-super-secret-key-change-in-production-2024}
   expiration: ${JWT_EXPIRATION:86400000}
 
+oauth2:
+  google:
+    client-id: ${GOOGLE_CLIENT_ID:google-mock-client-id}
+    client-secret: ${GOOGLE_CLIENT_SECRET:google-mock-client-secret}
+    redirect-uri: ${GOOGLE_REDIRECT_URI:http://localhost:5173/oauth2/callback/google}
+  facebook:
+    client-id: ${FACEBOOK_CLIENT_ID:facebook-mock-client-id}
+    client-secret: ${FACEBOOK_CLIENT_SECRET:facebook-mock-client-secret}
+    redirect-uri: ${FACEBOOK_REDIRECT_URI:http://localhost:5173/oauth2/callback/facebook}
+
 logging:
   level:
     com.techshop.userservice: DEBUG
