@@ -3,6 +3,7 @@ package com.techshop.userservice.controller;
 import com.techshop.userservice.dto.*;
 import com.techshop.userservice.service.AuthService;
 import com.techshop.userservice.service.OtpService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,9 +39,10 @@ public class AuthController {
      * Response: { tempToken, expiresIn, maskedEmail, message }
      */
     @PostMapping("/otp/send")
-    public ResponseEntity<OtpSendResponse> sendOtp(@Valid @RequestBody OtpSendRequest request) {
+    public ResponseEntity<OtpSendResponse> sendOtp(@Valid @RequestBody OtpSendRequest request, HttpServletRequest servletRequest) {
         log.info("[AuthController] sendOtp: type={}, email={}", request.getType(), request.getEmail());
-        return ResponseEntity.ok(otpService.sendOtp(request));
+        String ipAddress = getClientIp(servletRequest);
+        return ResponseEntity.ok(otpService.sendOtp(request, ipAddress));
     }
 
     // =================== OTP: XÁC THỰC ===================
@@ -61,10 +63,11 @@ public class AuthController {
      * Body: { email }
      */
     @PostMapping("/otp/forgot-password")
-    public ResponseEntity<OtpSendResponse> forgotPassword(@Valid @RequestBody OtpSendRequest request) {
+    public ResponseEntity<OtpSendResponse> forgotPassword(@Valid @RequestBody OtpSendRequest request, HttpServletRequest servletRequest) {
         request.setType("FORGOT_PASSWORD");
         log.info("[AuthController] forgotPassword: email={}", request.getEmail());
-        return ResponseEntity.ok(otpService.sendOtp(request));
+        String ipAddress = getClientIp(servletRequest);
+        return ResponseEntity.ok(otpService.sendOtp(request, ipAddress));
     }
 
     // =================== QUÊN MẬT KHẨU: ĐẶT LẠI ===================
@@ -84,5 +87,14 @@ public class AuthController {
     public ResponseEntity<AuthResponse> checkToken(
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
         return ResponseEntity.ok(authService.checkToken(authHeader));
+    }
+
+    // =================== HELPERS ===================
+    private String getClientIp(HttpServletRequest request) {
+        String xfHeader = request.getHeader("X-Forwarded-For");
+        if (xfHeader == null || xfHeader.isEmpty()) {
+            return request.getRemoteAddr();
+        }
+        return xfHeader.split(",")[0].trim();
     }
 }

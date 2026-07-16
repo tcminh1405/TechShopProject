@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "otp_tokens", indexes = {
         @Index(name = "idx_otp_temp_token", columnList = "tempToken"),
-        @Index(name = "idx_otp_email",      columnList = "email")
+        @Index(name = "idx_otp_email",      columnList = "email"),
+        @Index(name = "idx_otp_ip",         columnList = "ipAddress")
 })
 @Getter
 @Setter
@@ -29,6 +30,10 @@ public class OtpToken {
     /** Email nhận OTP */
     @Column(nullable = false, length = 255)
     private String email;
+
+    /** IP address of the client requesting OTP */
+    @Column(name = "ip_address", length = 45)
+    private String ipAddress;
 
     /** Mã OTP 6 chữ số (đã hash bcrypt) */
     @Column(nullable = false, length = 100)

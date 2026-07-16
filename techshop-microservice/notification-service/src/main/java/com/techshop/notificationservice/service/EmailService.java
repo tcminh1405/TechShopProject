@@ -5,8 +5,8 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -20,11 +20,59 @@ import java.time.format.DateTimeFormatter;
 public class EmailService {
 
     private final JavaMailSender mailSender;
+    private final StringRedisTemplate redisTemplate;
 
     @Value("${spring.mail.username}")
     private String fromEmail;
 
+    @Value("${mail-limit.global-max-per-hour}")
+    private int globalMaxPerHour;
+
+    @Value("${mail-limit.global-max-per-day}")
+    private int globalMaxPerDay;
+
+    private void checkAndIncrementGlobalLimit() {
+        try {
+            String hourStr = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHH"));
+            String dayStr = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            
+            String hourKey = "email:global:count:hour:" + hourStr;
+            String dayKey = "email:global:count:day:" + dayStr;
+
+            // Kiểm tra giới hạn giờ
+            String currentHourVal = redisTemplate.opsForValue().get(hourKey);
+            if (currentHourVal != null && Integer.parseInt(currentHourVal) >= globalMaxPerHour) {
+                log.warn("Global email rate limit hit for hour ({}): {}", hourKey, currentHourVal);
+                throw new RuntimeException("Hệ thống tạm thời ngừng gửi email do vượt quá giới hạn mỗi giờ (" + globalMaxPerHour + ")");
+            }
+
+            // Kiểm tra giới hạn ngày
+            String currentDayVal = redisTemplate.opsForValue().get(dayKey);
+            if (currentDayVal != null && Integer.parseInt(currentDayVal) >= globalMaxPerDay) {
+                log.warn("Global email rate limit hit for day ({}): {}", dayKey, currentDayVal);
+                throw new RuntimeException("Hệ thống tạm thời ngừng gửi email do vượt quá giới hạn mỗi ngày (" + globalMaxPerDay + ")");
+            }
+
+            // Tăng count và set expire nếu là record mới
+            Long hourCount = redisTemplate.opsForValue().increment(hourKey);
+            if (hourCount != null && hourCount == 1) {
+                redisTemplate.expire(hourKey, java.time.Duration.ofHours(2));
+            }
+
+            Long dayCount = redisTemplate.opsForValue().increment(dayKey);
+            if (dayCount != null && dayCount == 1) {
+                redisTemplate.expire(dayKey, java.time.Duration.ofDays(2));
+            }
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            // Log lỗi kết nối Redis nhưng không chặn gửi email nếu lỗi Redis (fail-open)
+            log.error("Lỗi khi kết nối kiểm tra rate limit email bằng Redis: {}", e.getMessage());
+        }
+    }
+
     public void sendHtmlEmail(String to, String subject, String htmlBody) {
+        checkAndIncrementGlobalLimit();
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");

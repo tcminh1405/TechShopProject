@@ -19,7 +19,11 @@ public interface OtpTokenRepository extends JpaRepository<OtpToken, Long> {
     @Query("DELETE FROM OtpToken o WHERE o.expiresAt < :now OR o.used = true")
     void deleteExpiredAndUsed(LocalDateTime now);
 
-    /** Đếm số OTP chưa dùng của email trong 1 phút (rate-limit) */
-    @Query("SELECT COUNT(o) FROM OtpToken o WHERE o.email = :email AND o.createdAt > :since AND o.used = false")
+    /** Đếm số OTP của email trong 1 phút (rate-limit) */
+    @Query("SELECT COUNT(o) FROM OtpToken o WHERE o.email = :email AND o.createdAt > :since")
     long countRecentByEmail(String email, LocalDateTime since);
+
+    /** Đếm số OTP của IP trong 1 phút (rate-limit) */
+    @Query("SELECT COUNT(o) FROM OtpToken o WHERE o.ipAddress = :ipAddress AND o.createdAt > :since")
+    long countRecentByIp(String ipAddress, LocalDateTime since);
 }

@@ -49,6 +49,7 @@ public class OtpService {
     private static final int OTP_EXPIRE_MINUTES = OTP_EXPIRE_SECONDS / 60;
     private static final int MAX_FAIL_ATTEMPTS  = 5;
     private static final int RATE_LIMIT_PER_MIN = 3;   // tối đa 3 OTP/phút/email
+    private static final int RATE_LIMIT_IP_PER_MIN = 5; // tối đa 5 OTP/phút/IP
 
     private final OtpTokenRepository otpRepo;
     private final UserRepository     userRepo;
@@ -66,15 +67,23 @@ public class OtpService {
      * Dùng chung cho REGISTER, LOGIN, FORGOT_PASSWORD.
      */
     @Transactional
-    public OtpSendResponse sendOtp(OtpSendRequest req) {
+    public OtpSendResponse sendOtp(OtpSendRequest req, String ipAddress) {
         OtpType type = parseType(req.getType());
 
-        // Rate limiting
+        // Rate limiting by Email
         long recent = otpRepo.countRecentByEmail(req.getEmail(),
                 LocalDateTime.now().minusMinutes(1));
         if (recent >= RATE_LIMIT_PER_MIN) {
             throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,
                     "Bạn đã gửi quá nhiều yêu cầu OTP. Vui lòng chờ 1 phút.");
+        }
+
+        // Rate limiting by IP
+        long recentIp = otpRepo.countRecentByIp(ipAddress,
+                LocalDateTime.now().minusMinutes(1));
+        if (recentIp >= RATE_LIMIT_IP_PER_MIN) {
+            throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,
+                    "IP của bạn đã yêu cầu quá nhiều mã OTP. Vui lòng chờ 1 phút.");
         }
 
         String payload = switch (type) {
@@ -89,6 +98,7 @@ public class OtpService {
 
         OtpToken otpToken = OtpToken.builder()
                 .email(req.getEmail())
+                .ipAddress(ipAddress)
                 .otpHash(otpHash)
                 .tempToken(tempToken)
                 .type(type)

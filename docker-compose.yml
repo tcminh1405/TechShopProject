@@ -326,12 +326,16 @@ services:
       - JWT_SECRET=${JWT_SECRET:-techshop-super-secret-key-change-in-production-2024}
       - SPRING_MAIL_USERNAME=${MAIL_USERNAME:-tcminhangiang@gmail.com}
       - SPRING_MAIL_PASSWORD=${MAIL_PASSWORD:-iipx bevp sshi lbgf}
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_DATA_REDIS_PORT=6379
     depends_on:
       mysql-notification:
         condition: service_healthy
       discovery-service:
         condition: service_healthy
       kafka:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8086/actuator/health"]

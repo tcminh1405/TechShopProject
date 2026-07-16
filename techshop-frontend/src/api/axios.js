@@ -52,20 +52,26 @@ axiosClient.interceptors.response.use(
       console.warn(
         `[Rate Limiter] Request blocked. Retry after ${Math.ceil(error.resetTime / 1000)}s`
       );
-      return Promise.reject({
-        message: `Quá nhiều yêu cầu. Vui lòng thử lại sau ${Math.ceil(error.resetTime / 1000)} giây.`,
-        isRateLimitError: true,
-      });
+      error.response = {
+        status: 429,
+        data: {
+          message: `Quá nhiều yêu cầu. Vui lòng thử lại sau ${Math.ceil(error.resetTime / 1000)} giây.`
+        }
+      };
+      return Promise.reject(error);
     }
 
     // Handle server rate limit (429 Too Many Requests)
     if (error.response?.status === 429) {
       const retryAfter = error.response.headers["retry-after"] || 60;
       console.warn(`[Server Rate Limit] 429 - Retry after ${retryAfter}s`);
-      return Promise.reject({
-        message: `Server đang bận. Vui lòng thử lại sau ${retryAfter} giây.`,
-        isRateLimitError: true,
-      });
+      if (!error.response.data) {
+        error.response.data = {};
+      }
+      if (!error.response.data.message) {
+        error.response.data.message = `Yêu cầu quá nhanh. Vui lòng thử lại sau ${retryAfter} giây.`;
+      }
+      return Promise.reject(error);
     }
 
     // Handle unauthorized/forbidden errors (e.g. token expired)
