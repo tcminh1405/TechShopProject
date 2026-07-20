@@ -3,6 +3,12 @@ services:
   mysql-user:
     image: mysql:8.0
     container_name: techshop-mysql-user
+    restart: on-failure
+    command: mysqld --performance_schema=OFF --innodb_buffer_pool_size=32M --max_connections=50 --skip-log-bin
+    deploy:
+      resources:
+        limits:
+          memory: 160M
     environment:
       MYSQL_ROOT_PASSWORD: 123456
       MYSQL_DATABASE: techshop_userdb
@@ -22,6 +28,12 @@ services:
   mysql-order:
     image: mysql:8.0
     container_name: techshop-mysql-order
+    restart: on-failure
+    command: mysqld --performance_schema=OFF --innodb_buffer_pool_size=32M --max_connections=50 --skip-log-bin
+    deploy:
+      resources:
+        limits:
+          memory: 160M
     environment:
       MYSQL_ROOT_PASSWORD: 123456
       MYSQL_DATABASE: techshop_orderdb
@@ -41,6 +53,12 @@ services:
   mysql-payment:
     image: mysql:8.0
     container_name: techshop-mysql-payment
+    restart: on-failure
+    command: mysqld --performance_schema=OFF --innodb_buffer_pool_size=32M --max_connections=50 --skip-log-bin
+    deploy:
+      resources:
+        limits:
+          memory: 160M
     environment:
       MYSQL_ROOT_PASSWORD: 123456
       MYSQL_DATABASE: techshop_paymentdb
@@ -59,6 +77,12 @@ services:
   mysql-notification:
     image: mysql:8.0
     container_name: techshop-mysql-notification
+    restart: on-failure
+    command: mysqld --performance_schema=OFF --innodb_buffer_pool_size=32M --max_connections=50 --skip-log-bin
+    deploy:
+      resources:
+        limits:
+          memory: 160M
     environment:
       MYSQL_ROOT_PASSWORD: 123456
       MYSQL_DATABASE: techshop_notificationdb
@@ -77,6 +101,12 @@ services:
   mysql-inventory:
     image: mysql:8.0
     container_name: techshop-mysql-inventory
+    restart: on-failure
+    command: mysqld --performance_schema=OFF --innodb_buffer_pool_size=32M --max_connections=50 --skip-log-bin
+    deploy:
+      resources:
+        limits:
+          memory: 160M
     environment:
       MYSQL_ROOT_PASSWORD: 123456
       MYSQL_DATABASE: techshop_inventorydb
@@ -95,6 +125,12 @@ services:
   mysql-product:
     image: mysql:8.0
     container_name: techshop-mysql-product
+    restart: on-failure
+    command: mysqld --performance_schema=OFF --innodb_buffer_pool_size=32M --max_connections=50 --skip-log-bin
+    deploy:
+      resources:
+        limits:
+          memory: 160M
     environment:
       MYSQL_ROOT_PASSWORD: 123456
       MYSQL_DATABASE: techshop_productdb
@@ -114,6 +150,11 @@ services:
   redis:
     image: redis:7-alpine
     container_name: techshop-redis
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          memory: 64M
     ports:
       - "6379:6379"
     volumes:
@@ -135,12 +176,18 @@ services:
       context: ./techshop-microservice
       dockerfile: Dockerfile.discovery
     container_name: techshop-discovery
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          memory: 350M
     ports:
       - "8761:8761"
     networks:
       - techshop-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - JAVA_OPTS=-Xms64m -Xmx256m -XX:+UseContainerSupport -XX:+TieredCompilation -XX:TieredStopAtLevel=1
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
       interval: 30s
@@ -154,12 +201,18 @@ services:
       context: ./techshop-microservice
       dockerfile: Dockerfile.gateway
     container_name: techshop-gateway
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          memory: 350M
     ports:
       - "8080:8080"
     networks:
       - techshop-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - JAVA_OPTS=-Xms64m -Xmx256m -XX:+UseContainerSupport -XX:+TieredCompilation -XX:TieredStopAtLevel=1
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
     depends_on:
       discovery-service:
@@ -177,12 +230,18 @@ services:
       context: ./techshop-microservice
       dockerfile: Dockerfile.user
     container_name: techshop-user-service
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          memory: 350M
     ports:
       - "8081:8081"
     networks:
       - techshop-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - JAVA_OPTS=-Xms64m -Xmx256m -XX:+UseContainerSupport -XX:+TieredCompilation -XX:TieredStopAtLevel=1
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-user:3306/techshop_userdb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh&createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=123456
@@ -215,12 +274,18 @@ services:
       context: ./techshop-microservice
       dockerfile: Dockerfile.product
     container_name: techshop-product-service
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          memory: 350M
     ports:
       - "8082:8082"
     networks:
       - techshop-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - JAVA_OPTS=-Xms64m -Xmx256m -XX:+UseContainerSupport -XX:+TieredCompilation -XX:TieredStopAtLevel=1
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-product:3306/techshop_productdb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh&createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=123456
@@ -251,12 +316,18 @@ services:
       context: ./techshop-microservice
       dockerfile: Dockerfile.order
     container_name: techshop-order-service
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          memory: 350M
     ports:
       - "8083:8083"
     networks:
       - techshop-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - JAVA_OPTS=-Xms64m -Xmx256m -XX:+UseContainerSupport -XX:+TieredCompilation -XX:TieredStopAtLevel=1
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-order:3306/techshop_orderdb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh&createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=123456
@@ -285,12 +356,18 @@ services:
       context: ./techshop-microservice
       dockerfile: Dockerfile.payment
     container_name: techshop-payment-service
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          memory: 350M
     ports:
       - "8085:8085"
     networks:
       - techshop-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - JAVA_OPTS=-Xms64m -Xmx256m -XX:+UseContainerSupport -XX:+TieredCompilation -XX:TieredStopAtLevel=1
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-payment:3306/techshop_paymentdb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh&createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=123456
@@ -318,12 +395,18 @@ services:
       context: ./techshop-microservice
       dockerfile: Dockerfile.notification
     container_name: techshop-notification-service
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          memory: 350M
     ports:
       - "8086:8086"
     networks:
       - techshop-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - JAVA_OPTS=-Xms64m -Xmx256m -XX:+UseContainerSupport -XX:+TieredCompilation -XX:TieredStopAtLevel=1
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-notification:3306/techshop_notificationdb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh&createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=123456
@@ -356,12 +439,18 @@ services:
       context: ./techshop-microservice
       dockerfile: Dockerfile.inventory
     container_name: techshop-inventory-service
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          memory: 350M
     ports:
       - "8088:8088"
     networks:
       - techshop-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - JAVA_OPTS=-Xms64m -Xmx256m -XX:+UseContainerSupport -XX:+TieredCompilation -XX:TieredStopAtLevel=1
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-inventory:3306/techshop_inventorydb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh&createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=123456
@@ -386,6 +475,12 @@ services:
   mysql-ai:
     image: mysql:8.0
     container_name: techshop-mysql-ai
+    restart: on-failure
+    command: mysqld --performance_schema=OFF --innodb_buffer_pool_size=32M --max_connections=50 --skip-log-bin
+    deploy:
+      resources:
+        limits:
+          memory: 160M
     environment:
       MYSQL_ROOT_PASSWORD: 123456
       MYSQL_DATABASE: techshop_aidb
@@ -407,12 +502,18 @@ services:
       context: ./techshop-microservice
       dockerfile: Dockerfile.ai
     container_name: techshop-ai-service
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          memory: 350M
     ports:
       - "8089:8089"
     networks:
       - techshop-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - JAVA_OPTS=-Xms64m -Xmx256m -XX:+UseContainerSupport -XX:+TieredCompilation -XX:TieredStopAtLevel=1
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-ai:3306/techshop_aidb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh&createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=123456
@@ -434,10 +535,16 @@ services:
   kafka:
     image: apache/kafka:3.7.0
     container_name: techshop-kafka
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          memory: 384M
     ports:
       - "9092:9092"
     environment:
       - KAFKA_NODE_ID=1
+      - KAFKA_HEAP_OPTS=-Xms128m -Xmx256m
       - KAFKA_PROCESS_ROLES=broker,controller
       - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
